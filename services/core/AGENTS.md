@@ -13,7 +13,7 @@ This directory and its subdirectories. The issue's `Own` paths are binding; ever
 - Work only inside the issue's `Own` paths; everything outside `Own` is read-only.
 - Code tasks never write under `docs/`. A doc gap becomes a `doc-gap` issue.
 - Commit only your owned paths. Conventional Commits linking spec and issue (e.g. `Implements: FEAT-###`, `Fixes #<n>`). Never `git add -A`.
-- Branch from `main`, open a PR, never push to `main`.
+- Branch from `main` with `<class>/<issue-number>-<slug>` (e.g. `implement/12-feat-001-auth`), open a PR, never push to `main`.
 - In code and tests, cite permanent spec anchors (`FEAT-###`, `NFR-###`, `EVT-###`, or `C-###`). Commits and PRs link the spec and the GitHub issue.
 - Implement all states, schemas, and events assigned to your area; never leave stubbed states or skip declared non-happy paths.
 - Never log or commit secrets, tokens, or unmasked identity; credentials live in the secret store.
