@@ -7,7 +7,6 @@ assignees: ""
 ---
 
 Class: implement | fix | verify | spec | chore
-Area:
 Own:
 Depends on: none
 Contract:

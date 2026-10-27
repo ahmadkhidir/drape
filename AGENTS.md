@@ -68,7 +68,7 @@ Changing a stack choice is a decision: record it in `.decisions/` and update thi
 ## Area rules
 
 Area rules live in the nearest `AGENTS.md`: any coding agent working in the area loads them.
-Start the session in the area, or read its file first when the issue names one. List them with
+Read the nearest `AGENTS.md` at or above the issue's `Own` paths. List them with
 `git ls-files '*AGENTS.md'` or `find . -name AGENTS.md`.
 
 Code ownership (`CODEOWNERS`) is disabled.
@@ -138,8 +138,8 @@ can stop it at any point.
   The parent phase groups its tasks; it does not order them.
 - **A frozen contract is a precondition.** When interfaces exist, an issue whose `C-###` is not `Frozen` is not ready, even
   with its blockers closed.
-- **Task execution.** A worker focuses on its assigned issue, reads the area file and documents
-  it names, stays within its owned paths, and reports back upon completion.
+- **Task execution.** A worker focuses on its assigned issue, reads the nearest `AGENTS.md` at or above its
+  `Own` paths and the documents it names, stays within its owned paths, and reports back upon completion.
 - **Tasks are leaves.** Only a phase issue has sub-issues. Never nest a task under a task.
 - **A phase issue is never dispatched.** It groups its tasks and parents the gate.
 - **The coordinating session works too.** When the user keeps the work here, do it under the same
@@ -183,13 +183,12 @@ Follow this triage protocol:
 Every task is an issue from `.github/ISSUE_TEMPLATE/task.md`, parented to its phase issue, with:
 
 - `Class` — implement, fix, verify, spec, or chore.
-- `Area` — the folder whose `AGENTS.md` governs the work.
-- `Own` — the paths the task may write; everything outside `Own` is read-only.
+- `Own` — the paths the task may write; everything outside `Own` is read-only. The nearest `AGENTS.md` at or above `Own` governs the work.
 - `Depends on` — the issue numbers that must close first, or `none`. The issue's blocked-by links
   mirror this line; when they disagree, the issue body is the record and the coordinator fixes the
   links.
 - `Contract` — the `C-###` it implements, or `none`.
-- `Specification` — the specific feature (`FEAT-###`), screens, schema entities, telemetry events (`EVT-###`), or NFRs assigned to this area.
+- `Specification` — the specific feature (`FEAT-###`), screens, schema entities, telemetry events (`EVT-###`), or NFRs assigned to this task.
 - `Criteria` — where the acceptance criteria live (e.g. from `features/FEAT-###.md`, screens, or contracts).
 
 A task closes when its PR merges and the issue closes. There is no route file and no separate
