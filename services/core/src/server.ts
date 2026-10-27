@@ -8,6 +8,7 @@ import fastify, { type FastifyInstance, type FastifyServerOptions } from 'fastif
 import cors from '@fastify/cors';
 import type { Redis } from 'ioredis';
 import { healthRoutes } from './routes/health.js';
+import { fabricRoutes } from './routes/fabrics.js';
 import { authRoutes } from './routes/auth.js';
 import { consentRoutes } from './routes/consents.js';
 import { checkoutRoutes } from './routes/checkout.js';
@@ -41,6 +42,9 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
   await server.register(healthRoutes, {
     checkDbLive: options.checkDbLive,
   });
+
+  // Register fabric catalog and shader delivery routes (C-007..C-010)
+  await server.register(fabricRoutes);
 
   // Register authentication routes (C-001, C-003)
   await server.register(authRoutes);
