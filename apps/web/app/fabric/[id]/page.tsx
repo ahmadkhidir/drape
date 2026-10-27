@@ -212,6 +212,7 @@ export default function FabricDetailPage() {
                     <ClothSandbox
                       fabricId={fabric.id}
                       fabricName={fabric.name}
+                      textureUrl={fabric.thumbnailUrl || fabric.normalMapUrl}
                       gsm={fabric.gsm}
                       composition={fabric.fiberBreakdown}
                       weaveType={fabric.weaveStructure}

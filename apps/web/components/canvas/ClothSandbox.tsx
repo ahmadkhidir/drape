@@ -16,6 +16,7 @@ import { detectGraphicsCapabilities } from './ClothSandboxBoot';
 export interface ClothSandboxProps {
   fabricId?: string;
   fabricName?: string;
+  textureUrl?: string;
   gsm?: number;
   composition?: string;
   weaveType?: string;
@@ -50,6 +51,47 @@ export function getFabricColorAndShine(nameOrId: string = ''): { color: number; 
   }
   return { color: 0xf2ede4, roughness: 0.32, metalness: 0.15 }; // Default luminous luxury textile
 }
+export function getFabricTextureUrl(nameOrId: string = ''): string | null {
+  const lower = nameOrId.toLowerCase();
+  if (lower.includes('slk-892') || lower.includes('silk-jacquard') || lower.includes('jacquard')) {
+    return '/textures/fabrics/silk-jacquard.svg';
+  }
+  if (lower.includes('slk-401') || lower.includes('ivory-satin') || lower.includes('duchesse')) {
+    return '/textures/fabrics/ivory-satin.svg';
+  }
+  if (lower.includes('wol-205') || lower.includes('charcoal-wool') || (lower.includes('wool') && lower.includes('crepe'))) {
+    return '/textures/fabrics/charcoal-wool.svg';
+  }
+  if (lower.includes('vlv-730') || lower.includes('obsidian-velvet') || lower.includes('velvet')) {
+    return '/textures/fabrics/obsidian-velvet.svg';
+  }
+  if (lower.includes('lin-112') || lower.includes('heritage-linen') || (lower.includes('flax') && lower.includes('linen'))) {
+    return '/textures/fabrics/heritage-linen.svg';
+  }
+  if (lower.includes('brc-608') || lower.includes('venetian-brocade') || lower.includes('venetian')) {
+    return '/textures/fabrics/venetian-brocade.svg';
+  }
+  if (lower.includes('slk-120') || lower.includes('champagne-cupro') || lower.includes('cupro')) {
+    return '/textures/fabrics/champagne-cupro.svg';
+  }
+  if (lower.includes('wol-340') || lower.includes('wool-twill') || lower.includes('twill')) {
+    return '/textures/fabrics/wool-twill.svg';
+  }
+  if (lower.includes('csh-502') || lower.includes('camel-cashmere') || lower.includes('cashmere') || lower.includes('camel')) {
+    return '/textures/fabrics/camel-cashmere.svg';
+  }
+  if (lower.includes('chf-015') || lower.includes('silk-chiffon') || lower.includes('chiffon')) {
+    return '/textures/fabrics/silk-chiffon.svg';
+  }
+  if (lower.includes('brc-905') || lower.includes('gold-brocade') || lower.includes('brocade')) {
+    return '/textures/fabrics/gold-brocade.svg';
+  }
+  if (lower.includes('lin-404') || lower.includes('raw-linen') || lower.includes('linen')) {
+    return '/textures/fabrics/raw-linen.svg';
+  }
+  return null;
+}
+
 
 export function createProceduralWeaveTexture(weaveType: string = 'satin'): { normalMap: THREE.CanvasTexture | null; bumpMap: THREE.CanvasTexture | null } {
   if (typeof document === 'undefined') {
@@ -108,6 +150,7 @@ export function createProceduralWeaveTexture(weaveType: string = 'satin'): { nor
 export function ClothSandbox({
   fabricId = 'FAB-SLK-892',
   fabricName = 'Emerald Architectural Silk Brocade',
+  textureUrl,
   gsm = 280,
   composition = '85% Mulberry Silk, 15% Metallic Lurex',
   weaveType = '8-End Duchesse Satin',
@@ -134,6 +177,9 @@ export function ClothSandbox({
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const clothMeshRef = useRef<THREE.Mesh | null>(null);
+  const activeTextureRef = useRef<THREE.Texture | null>(null);
+  const propsRef = useRef({ fabricId, fabricName, textureUrl, weaveType, applyFabricMaterial });
+  propsRef.current = { fabricId, fabricName, textureUrl, weaveType, applyFabricMaterial };
   const isPointerDownRef = useRef<boolean>(false);
   const lastPointerPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
@@ -229,19 +275,71 @@ export function ClothSandbox({
   };
 
   
-  // Dynamic material color update when active fabric prop updates
+
+  const applyFabricMaterial = useCallback((mat: THREE.MeshStandardMaterial, targetFabricId: string, targetFabricName: string, targetTextureUrl?: string) => {
+    const shine = getFabricColorAndShine(targetFabricName || targetFabricId);
+    const resolvedUrl = targetTextureUrl || shaderAssets?.textures?.albedoUrl || getFabricTextureUrl(targetFabricId || targetFabricName);
+
+    mat.roughness = shine.roughness;
+    mat.metalness = shine.metalness;
+
+    if (resolvedUrl && typeof window !== 'undefined') {
+      try {
+        const loader = new THREE.TextureLoader();
+        loader.load(
+          resolvedUrl,
+          (loadedTexture) => {
+            loadedTexture.wrapS = THREE.RepeatWrapping;
+            loadedTexture.wrapT = THREE.RepeatWrapping;
+            loadedTexture.repeat.set(2, 2);
+            loadedTexture.colorSpace = THREE.SRGBColorSpace;
+            loadedTexture.needsUpdate = true;
+
+            if (activeTextureRef.current && activeTextureRef.current !== loadedTexture) {
+              activeTextureRef.current.dispose();
+            }
+            activeTextureRef.current = loadedTexture;
+
+            mat.map = loadedTexture;
+            mat.color.setHex(0xffffff);
+            mat.needsUpdate = true;
+          },
+          undefined,
+          () => {
+            if (activeTextureRef.current) {
+              activeTextureRef.current.dispose();
+              activeTextureRef.current = null;
+            }
+            mat.map = null;
+            mat.color.setHex(shine.color);
+            mat.needsUpdate = true;
+          }
+        );
+      } catch {
+        mat.map = null;
+        mat.color.setHex(shine.color);
+        mat.needsUpdate = true;
+      }
+    } else {
+      if (activeTextureRef.current) {
+        activeTextureRef.current.dispose();
+        activeTextureRef.current = null;
+      }
+      mat.map = null;
+      mat.color.setHex(shine.color);
+      mat.needsUpdate = true;
+    }
+  }, [shaderAssets]);
+
+  // Dynamic material pattern and color update when active fabric prop updates
   useEffect(() => {
     if (clothMeshRef.current) {
       const mat = clothMeshRef.current.material as THREE.MeshStandardMaterial;
       if (mat) {
-        const shine = getFabricColorAndShine(fabricName || fabricId);
-        mat.color.setHex(shine.color);
-        mat.roughness = shine.roughness;
-        mat.metalness = shine.metalness;
-        mat.needsUpdate = true;
+        applyFabricMaterial(mat, fabricId, fabricName, textureUrl);
       }
     }
-  }, [fabricId, fabricName]);
+  }, [fabricId, fabricName, textureUrl, applyFabricMaterial]);
 
   const handlePointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -318,8 +416,9 @@ export function ClothSandbox({
 
       geometry.setIndex(new THREE.BufferAttribute(engine.indices, 1));
 
-      const fabricShine = getFabricColorAndShine(fabricName || fabricId);
-      const { normalMap, bumpMap } = createProceduralWeaveTexture(weaveType);
+      const currentProps = propsRef.current;
+      const fabricShine = getFabricColorAndShine(currentProps.fabricName || currentProps.fabricId);
+      const { normalMap, bumpMap } = createProceduralWeaveTexture(currentProps.weaveType);
 
       // Luxury satin/silk material shader with calibrated luster and tactile micro-weave
       const material = new THREE.MeshStandardMaterial({
@@ -332,6 +431,7 @@ export function ClothSandbox({
         bumpScale: 0.04,
       });
 
+      currentProps.applyFabricMaterial(material, currentProps.fabricId, currentProps.fabricName, currentProps.textureUrl);
       const mesh = new THREE.Mesh(geometry, material);
       clothMeshRef.current = mesh;
       scene.add(mesh);
