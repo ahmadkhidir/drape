@@ -37,8 +37,8 @@ export const FALLBACK_FABRICS: FabricDetail[] = [
     pricePerYard: 185.0,
     swatchPrice: 25.0,
     pbrTexturesUrl: '/api/v1/fabrics/FAB-SLK-892/shader-assets',
-    thumbnailUrl: '/assets/textures/fabrics/silk-jacquard-albedo.jpg',
-    normalMapUrl: '/assets/textures/fabrics/silk-jacquard-normal.jpg',
+    thumbnailUrl: '/textures/fabrics/silk-jacquard.svg',
+    normalMapUrl: '/textures/fabrics/silk-jacquard.svg',
     activeBolt: {
       id: 'bolt_901',
       dyeLotCode: 'LOT-2026-EMR-04',
@@ -83,8 +83,8 @@ export const FALLBACK_FABRICS: FabricDetail[] = [
     pricePerYard: 145.0,
     swatchPrice: 25.0,
     pbrTexturesUrl: '/api/v1/fabrics/FAB-SLK-401/shader-assets',
-    thumbnailUrl: '/assets/textures/fabrics/ivory-satin-albedo.jpg',
-    normalMapUrl: '/assets/textures/fabrics/ivory-satin-normal.jpg',
+    thumbnailUrl: '/textures/fabrics/ivory-satin.svg',
+    normalMapUrl: '/textures/fabrics/ivory-satin.svg',
     activeBolt: {
       id: 'bolt_902',
       dyeLotCode: 'LOT-2026-IVR-01',
@@ -129,8 +129,8 @@ export const FALLBACK_FABRICS: FabricDetail[] = [
     pricePerYard: 120.0,
     swatchPrice: 25.0,
     pbrTexturesUrl: '/api/v1/fabrics/FAB-WOL-205/shader-assets',
-    thumbnailUrl: '/assets/textures/fabrics/charcoal-wool-albedo.jpg',
-    normalMapUrl: '/assets/textures/fabrics/charcoal-wool-normal.jpg',
+    thumbnailUrl: '/textures/fabrics/charcoal-wool.svg',
+    normalMapUrl: '/textures/fabrics/charcoal-wool.svg',
     activeBolt: {
       id: 'bolt_903',
       dyeLotCode: 'LOT-2026-CHR-08',
@@ -175,8 +175,8 @@ export const FALLBACK_FABRICS: FabricDetail[] = [
     pricePerYard: 160.0,
     swatchPrice: 25.0,
     pbrTexturesUrl: '/api/v1/fabrics/FAB-VLV-730/shader-assets',
-    thumbnailUrl: '/assets/textures/fabrics/obsidian-velvet-albedo.jpg',
-    normalMapUrl: '/assets/textures/fabrics/obsidian-velvet-normal.jpg',
+    thumbnailUrl: '/textures/fabrics/obsidian-velvet.svg',
+    normalMapUrl: '/textures/fabrics/obsidian-velvet.svg',
     activeBolt: {
       id: 'bolt_904',
       dyeLotCode: 'LOT-2026-OBS-11',
@@ -221,8 +221,8 @@ export const FALLBACK_FABRICS: FabricDetail[] = [
     pricePerYard: 85.0,
     swatchPrice: 25.0,
     pbrTexturesUrl: '/api/v1/fabrics/FAB-LIN-112/shader-assets',
-    thumbnailUrl: '/assets/textures/fabrics/raw-linen-albedo.jpg',
-    normalMapUrl: '/assets/textures/fabrics/raw-linen-normal.jpg',
+    thumbnailUrl: '/textures/fabrics/heritage-linen.svg',
+    normalMapUrl: '/textures/fabrics/heritage-linen.svg',
     activeBolt: {
       id: 'bolt_905',
       dyeLotCode: 'LOT-2026-FLX-05',
@@ -267,8 +267,8 @@ export const FALLBACK_FABRICS: FabricDetail[] = [
     pricePerYard: 240.0,
     swatchPrice: 25.0,
     pbrTexturesUrl: '/api/v1/fabrics/FAB-BRC-608/shader-assets',
-    thumbnailUrl: '/assets/textures/fabrics/gold-brocade-albedo.jpg',
-    normalMapUrl: '/assets/textures/fabrics/gold-brocade-normal.jpg',
+    thumbnailUrl: '/textures/fabrics/venetian-brocade.svg',
+    normalMapUrl: '/textures/fabrics/venetian-brocade.svg',
     activeBolt: {
       id: 'bolt_906',
       dyeLotCode: 'LOT-2026-GLD-02',
@@ -313,8 +313,8 @@ export const FALLBACK_FABRICS: FabricDetail[] = [
     pricePerYard: 110.0,
     swatchPrice: 25.0,
     pbrTexturesUrl: '/api/v1/fabrics/FAB-SLK-120/shader-assets',
-    thumbnailUrl: '/assets/textures/fabrics/silk-chiffon-albedo.jpg',
-    normalMapUrl: '/assets/textures/fabrics/silk-chiffon-normal.jpg',
+    thumbnailUrl: '/textures/fabrics/champagne-cupro.svg',
+    normalMapUrl: '/textures/fabrics/champagne-cupro.svg',
     activeBolt: {
       id: 'bolt_907',
       dyeLotCode: 'LOT-2026-WHT-03',
@@ -359,8 +359,8 @@ export const FALLBACK_FABRICS: FabricDetail[] = [
     pricePerYard: 195.0,
     swatchPrice: 25.0,
     pbrTexturesUrl: '/api/v1/fabrics/FAB-WOL-340/shader-assets',
-    thumbnailUrl: '/assets/textures/fabrics/wool-twill-albedo.jpg',
-    normalMapUrl: '/assets/textures/fabrics/wool-twill-normal.jpg',
+    thumbnailUrl: '/textures/fabrics/camel-cashmere.svg',
+    normalMapUrl: '/textures/fabrics/camel-cashmere.svg',
     activeBolt: {
       id: 'bolt_908',
       dyeLotCode: 'LOT-2026-NVY-09',
@@ -535,8 +535,8 @@ export function queryCatalog(
     pricePerYard: f.pricePerYard,
     remainingContinuousYards: f.activeBolt.remainingContinuousYards,
     isLowStock: f.activeBolt.remainingContinuousYards < 5.0,
-    thumbnailUrl: f.thumbnailUrl || '/assets/textures/fabrics/silk-jacquard-albedo.jpg',
-    normalMapUrl: f.normalMapUrl || '/assets/textures/fabrics/silk-jacquard-normal.jpg',
+    thumbnailUrl: f.thumbnailUrl || '/textures/fabrics/silk-jacquard.svg',
+    normalMapUrl: f.normalMapUrl || '/textures/fabrics/silk-jacquard.svg',
   }));
 
   return {

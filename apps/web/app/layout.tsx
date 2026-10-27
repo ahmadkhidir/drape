@@ -42,6 +42,10 @@ export const metadata: Metadata = {
     'bespoke tailoring',
   ],
   authors: [{ name: 'Drape Atelier' }],
+  icons: {
+    icon: [{ url: '/brand/favicon.ico', sizes: 'any' }, { url: '/brand/favicon.svg', type: 'image/svg+xml' }],
+    apple: '/brand/app-icon.png',
+  },
 };
 
 export default function RootLayout({

@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { VerletClothEngine } from '../components/canvas/clothPhysics';
 import { detectGraphicsCapabilities } from '../components/canvas/ClothSandboxBoot';
+import { getFabricColorAndShine } from '../components/canvas/ClothSandbox';
 import { PhysicsMatrix, ShaderAssetsResponse } from '../components/canvas/types';
 
 describe('FEAT-002: Verlet Cloth Physics Engine', () => {
@@ -321,5 +322,49 @@ describe('C-009: Contract Conformance for Shader Assets', () => {
     expect(mockShaderResponse.physicsMatrix.massDensity).toBe(0.28);
     expect(mockShaderResponse.physicsMatrix.gravityVector).toEqual([0, -9.8, 0]);
     expect(mockShaderResponse.maxTileZoomLevel).toBe(5);
+  });
+});
+
+describe('Atelier WebGPU Craft Polish & Material Shader Calibration', () => {
+  const defaultPhysics: PhysicsMatrix = {
+    massDensity: 0.28,
+    bendingStiffness: 4.5,
+    tensileElasticity: 0.9,
+    airDamping: 0.04,
+    gravityVector: [0, -9.8, 0],
+  };
+
+  it('supports pinMode: atelier_dual with natural cascade suspension', () => {
+    const engine = new VerletClothEngine({
+      gridX: 20,
+      gridY: 20,
+      spacing: 0.1,
+      pinMode: 'atelier_dual',
+      physicsMatrix: defaultPhysics,
+    });
+
+    const pinLeft = Math.round(20 * 0.22); // 4
+    const pinRight = Math.round(20 * 0.78); // 16
+    expect(engine.pinned[pinLeft]).toBe(1);
+    expect(engine.pinned[pinRight]).toBe(1);
+    expect(engine.pinned[0]).toBe(0); // Top left is free
+    expect(engine.pinned[19]).toBe(0); // Top right is free
+  });
+
+  it('dynamically resolves color, roughness, and metalness based on fabric name/id', () => {
+    const ivory = getFabricColorAndShine('Ivory Duchesse Silk Satin');
+    expect(ivory.color).toBe(0xf5f1e8);
+    expect(ivory.roughness).toBe(0.26);
+
+    const velvet = getFabricColorAndShine('Midnight Velvet');
+    expect(velvet.color).toBe(0x1a1c22);
+    expect(velvet.roughness).toBe(0.65);
+
+    const wool = getFabricColorAndShine('Charcoal Wool Crepe');
+    expect(wool.color).toBe(0x32343a);
+
+    const emerald = getFabricColorAndShine('Imperial Emerald Brocade');
+    expect(emerald.color).toBe(0x1b4332);
+    expect(emerald.metalness).toBe(0.22);
   });
 });

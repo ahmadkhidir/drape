@@ -16,6 +16,16 @@ import {
   CreatePaymentIntentRequest,
   CreateOrderRequest,
 } from '../lib/checkoutTypes';
+import { EXCHANGE_RATES, formatPrice } from '../lib/currency';
+
+beforeEach(() => {
+  vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Network offline')));
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.restoreAllMocks();
+});
 
 describe('FEAT-007: Algorithmic Yardage & Pattern Spec Estimator (C-016)', () => {
   it('enforces 1/8th-yard (0.125) precision snapping on all calculations', () => {
@@ -144,11 +154,11 @@ describe('FEAT-007: Algorithmic Yardage & Pattern Spec Estimator (C-016)', () =>
 
 describe('FEAT-008: 15-Minute Continuous Bolt Reservation Timer (C-019, C-020)', () => {
   beforeEach(() => {
-    vi.useFakeTimers();
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Network offline')));
   });
 
   afterEach(() => {
-    vi.useRealTimers();
+    vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
 
@@ -281,5 +291,20 @@ describe('Screen 07: Order Confirmation & Provenance Receipt (C-023)', () => {
     expect(order.carrierTracking?.trackingNumber).toBeDefined();
     expect(order.specDossierUrl).toContain('spec-pdf');
     expect(order.dyeLotCertificateUrl).toBeDefined();
+  });
+});
+
+describe('Atelier Currency Conversion & Certified Security Header', () => {
+  it('converts prices across USD, EUR, GBP, and NGN with proper localization', () => {
+    expect(EXCHANGE_RATES.USD).toBe(1.0);
+    expect(EXCHANGE_RATES.EUR).toBe(0.92);
+    expect(EXCHANGE_RATES.GBP).toBe(0.79);
+    expect(EXCHANGE_RATES.NGN).toBe(1600.0);
+
+    const sampleUsd = 510.0;
+    expect(formatPrice(sampleUsd, 'USD')).toBe('$510.00');
+    expect(formatPrice(sampleUsd, 'EUR')).toBe('€469.20');
+    expect(formatPrice(sampleUsd, 'GBP')).toBe('£402.90');
+    expect(formatPrice(sampleUsd, 'NGN')).toBe('₦816,000');
   });
 });

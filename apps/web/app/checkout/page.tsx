@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import YardageCalculatorWidget, { formatFractionalYards } from '../../components/checkout/YardageCalculatorWidget';
 import BoltReservationTimer from '../../components/checkout/BoltReservationTimer';
 import StripeElementsForm from '../../components/checkout/StripeElementsForm';
@@ -16,6 +17,9 @@ import {
   YardageCalculationResponse,
 } from '../../lib/checkoutTypes';
 import { createPaymentIntent, createOrder } from '../../lib/checkoutApi';
+
+
+import { formatPrice } from '../../lib/currency';
 
 const MASTER_TAILOR_STUDIOS = [
   { id: 'tailor_savile_row', name: 'Atelier Savile Row & Co.', city: 'London, UK', leadTime: '3-5 business days' },
@@ -207,10 +211,8 @@ export default function CheckoutPage() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-xs uppercase tracking-widest text-accent-700 font-semibold font-mono">
-                Screen 06 • Atelier Checkout
+                Private Salon • Atelier Checkout • Certified Vault Security
               </span>
-              <span className="text-xs text-grey-400">•</span>
-              <span className="text-xs text-grey-600 font-mono">256-bit Encrypted Checkout</span>
             </div>
             <h1 className="text-3xl font-display text-primary-900 font-normal">
               Continuous Cut Yardage & Atelier Checkout
@@ -488,7 +490,7 @@ export default function CheckoutPage() {
                   >
                     <div className="flex items-center justify-between text-xs font-semibold">
                       <span>DHL Express Worldwide</span>
-                      <span>{currencySymbol}35.00</span>
+                      <span>{formatPrice(35.0, currency)}</span>
                     </div>
                     <p className="text-[11px] text-grey-500 mt-0.5">2-3 Business Days • Temperature controlled</p>
                   </div>
@@ -503,7 +505,7 @@ export default function CheckoutPage() {
                   >
                     <div className="flex items-center justify-between text-xs font-semibold">
                       <span>White-Glove Courier</span>
-                      <span>{currencySymbol}65.00</span>
+                      <span>{formatPrice(65.0, currency)}</span>
                     </div>
                     <p className="text-[11px] text-grey-500 mt-0.5">Hand-delivered in bespoke cedar trunk</p>
                   </div>
@@ -559,8 +561,8 @@ export default function CheckoutPage() {
                         <p className="text-[11px] text-grey-600">{item.millName}</p>
                       </div>
                       <span className="font-mono font-semibold text-primary-900 text-sm">
-                        {currencySymbol}
-                        {(item.yardsCut * item.pricePerYard).toFixed(2)}
+                        {formatPrice(item.isSwatchBox ? 25.0 : item.yardsCut * item.pricePerYard, currency)}
+
                       </span>
                     </div>
 
@@ -619,7 +621,7 @@ export default function CheckoutPage() {
                     />
                     <div>
                       <span className="font-semibold text-emerald-900">
-                        Automatic $25 Swatch Presentation Credit
+                        Automatic {formatPrice(25.0, currency)} Swatch Presentation Credit
                       </span>
                       <p className="text-[11px] text-emerald-800 mt-0.5">
                         Your previous Imperial Emerald swatch card order credit is automatically applied to this full bolt
@@ -670,29 +672,29 @@ export default function CheckoutPage() {
               <div className="pt-3 border-t border-grey-200 space-y-2 text-xs">
                 <div className="flex justify-between text-grey-600">
                   <span>Continuous Cut Yardage Subtotal</span>
-                  <span className="font-mono">{currencySymbol}{subtotal.toFixed(2)}</span>
+                  <span className="font-mono">{formatPrice(subtotal, currency)}</span>
                 </div>
 
                 {applySwatchCredit && hasQualifyingSwatchOrder && (
                   <div className="flex justify-between text-emerald-700 font-medium">
                     <span>Swatch Box Presentation Credit</span>
-                    <span className="font-mono">−{currencySymbol}{swatchCreditValue.toFixed(2)}</span>
+                    <span className="font-mono">−{formatPrice(swatchCreditValue, currency)}</span>
                   </div>
                 )}
 
                 <div className="flex justify-between text-grey-600">
                   <span>Shipping ({shippingMethod === 'express_dhl' ? 'DHL Express' : 'White-Glove'})</span>
-                  <span className="font-mono">{currencySymbol}{shippingCost.toFixed(2)}</span>
+                  <span className="font-mono">{formatPrice(shippingCost, currency)}</span>
                 </div>
 
                 <div className="flex justify-between text-grey-600">
                   <span>Estimated VAT / Duties (8.25%)</span>
-                  <span className="font-mono">{currencySymbol}{estimatedTax.toFixed(2)}</span>
+                  <span className="font-mono">{formatPrice(estimatedTax, currency)}</span>
                 </div>
 
                 <div className="flex justify-between text-base font-display font-semibold text-primary-900 pt-2 border-t border-grey-200">
                   <span>Total Due</span>
-                  <span className="font-mono text-lg">{currencySymbol}{grandTotal.toFixed(2)} {currency}</span>
+                  <span className="font-mono text-lg">{formatPrice(grandTotal, currency)} {currency}</span>
                 </div>
               </div>
 
@@ -711,7 +713,7 @@ export default function CheckoutPage() {
                   </>
                 ) : (
                   <span>
-                    Authorize & Place Order — {currencySymbol}{grandTotal.toFixed(2)}
+                    Authorize & Place Order — {formatPrice(grandTotal, currency)}
                   </span>
                 )}
               </button>

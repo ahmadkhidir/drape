@@ -162,9 +162,7 @@ export default function FabricCatalogPage() {
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
           {/* Brand Monogram */}
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-ink dark:bg-alabaster text-alabaster dark:text-ink font-display text-xl font-bold tracking-tight shadow-sm group-hover:bg-gold transition-colors">
-              D
-            </div>
+            <img src="/brand/monogram-gold.svg" alt="Drape Atelier Monogram" className="h-8 w-8 object-contain" />
             <span className="font-display text-xl tracking-widest text-ink dark:text-alabaster uppercase font-semibold">
               DRAPE
             </span>
