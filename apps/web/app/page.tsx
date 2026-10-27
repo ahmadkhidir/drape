@@ -96,7 +96,7 @@ export default function AtelierHomePage() {
 
           {/* Editorial Navigation */}
           <nav className="hidden md:flex items-center space-x-8 text-sm font-medium tracking-wide text-grey-700 dark:text-grey-300">
-            <a href="#catalog" className="hover:text-gold transition-colors">
+            <a href="/catalog" className="hover:text-gold transition-colors">
               Fabric Catalog
             </a>
             <a href="#neural-atelier" className="hover:text-gold transition-colors">
@@ -120,7 +120,7 @@ export default function AtelierHomePage() {
               Sound: Off
             </button>
             <a
-              href="#catalog"
+              href="/catalog"
               className="inline-flex items-center px-4 py-2 text-xs font-semibold uppercase tracking-wider text-alabaster bg-ink dark:bg-alabaster dark:text-ink rounded-md hover:bg-primary-700 dark:hover:bg-grey-200 transition-colors shadow-sm"
             >
               Explore Bolts
@@ -153,7 +153,7 @@ export default function AtelierHomePage() {
               {/* Action Hierarchy */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4">
                 <a
-                  href="#catalog"
+                  href="/catalog"
                   className="inline-flex justify-center items-center px-8 py-3.5 rounded-md text-sm font-semibold tracking-wide text-alabaster bg-ink hover:bg-primary-700 dark:bg-alabaster dark:text-ink dark:hover:bg-grey-200 shadow-md transition-all duration-200"
                 >
                   Explore Catalog
