@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { VerletClothEngine } from '../components/canvas/clothPhysics';
 import { detectGraphicsCapabilities } from '../components/canvas/ClothSandboxBoot';
-import { getFabricColorAndShine } from '../components/canvas/ClothSandbox';
+import { getFabricColorAndShine, getFabricTextureUrl } from '../components/canvas/ClothSandbox';
 import { PhysicsMatrix, ShaderAssetsResponse } from '../components/canvas/types';
 
 describe('FEAT-002: Verlet Cloth Physics Engine', () => {
@@ -366,5 +366,26 @@ describe('Atelier WebGPU Craft Polish & Material Shader Calibration', () => {
     const emerald = getFabricColorAndShine('Imperial Emerald Brocade');
     expect(emerald.color).toBe(0x1b4332);
     expect(emerald.metalness).toBe(0.22);
+  });
+
+  it('maps authentic textile pattern textures to simulation mesh for catalog SKUs', () => {
+    expect(getFabricTextureUrl('FAB-SLK-892')).toBe('/textures/fabrics/silk-jacquard.svg');
+    expect(getFabricTextureUrl('Mulberry Silk Jacquard')).toBe('/textures/fabrics/silk-jacquard.svg');
+    expect(getFabricTextureUrl('FAB-SLK-401')).toBe('/textures/fabrics/ivory-satin.svg');
+    expect(getFabricTextureUrl('Duchesse Silk Satin')).toBe('/textures/fabrics/ivory-satin.svg');
+    expect(getFabricTextureUrl('FAB-WOL-205')).toBe('/textures/fabrics/charcoal-wool.svg');
+    expect(getFabricTextureUrl('Biella Worsted Wool Crepe')).toBe('/textures/fabrics/charcoal-wool.svg');
+    expect(getFabricTextureUrl('FAB-VLV-730')).toBe('/textures/fabrics/obsidian-velvet.svg');
+    expect(getFabricTextureUrl('Midnight Velvet')).toBe('/textures/fabrics/obsidian-velvet.svg');
+    expect(getFabricTextureUrl('FAB-LIN-112')).toBe('/textures/fabrics/heritage-linen.svg');
+    expect(getFabricTextureUrl('Flax Linen')).toBe('/textures/fabrics/heritage-linen.svg');
+    expect(getFabricTextureUrl('FAB-BRC-608')).toBe('/textures/fabrics/venetian-brocade.svg');
+    expect(getFabricTextureUrl('Venetian Brocade')).toBe('/textures/fabrics/venetian-brocade.svg');
+    expect(getFabricTextureUrl('FAB-SLK-120')).toBe('/textures/fabrics/champagne-cupro.svg');
+    expect(getFabricTextureUrl('FAB-WOL-340')).toBe('/textures/fabrics/wool-twill.svg');
+    expect(getFabricTextureUrl('FAB-CSH-502')).toBe('/textures/fabrics/camel-cashmere.svg');
+    expect(getFabricTextureUrl('FAB-CHF-015')).toBe('/textures/fabrics/silk-chiffon.svg');
+    expect(getFabricTextureUrl('FAB-BRC-905')).toBe('/textures/fabrics/gold-brocade.svg');
+    expect(getFabricTextureUrl('FAB-LIN-404')).toBe('/textures/fabrics/raw-linen.svg');
   });
 });
