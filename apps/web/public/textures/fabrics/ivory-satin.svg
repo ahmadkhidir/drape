@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="satin-lustre" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FAF7F2"/>
+      <stop offset="35%" stop-color="#F2ECE0"/>
+      <stop offset="50%" stop-color="#FFFFFF"/>
+      <stop offset="65%" stop-color="#E8DFD0"/>
+      <stop offset="100%" stop-color="#F7F3EA"/>
+    </linearGradient>
+    <pattern id="satin-twill" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(25)">
+      <line x1="0" y1="0" x2="20" y2="0" stroke="#FFFFFF" stroke-width="1.2" stroke-opacity="0.6"/>
+      <line x1="0" y1="5" x2="20" y2="5" stroke="#DDD4C4" stroke-width="0.8" stroke-opacity="0.4"/>
+      <line x1="0" y1="10" x2="20" y2="10" stroke="#FFFFFF" stroke-width="1.2" stroke-opacity="0.5"/>
+      <line x1="0" y1="15" x2="20" y2="15" stroke="#E2D9CB" stroke-width="0.8" stroke-opacity="0.3"/>
+    </pattern>
+    <radialGradient id="satin-highlight" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.45"/>
+      <stop offset="50%" stop-color="#F5EFE6" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#D6CBB8" stop-opacity="0.25"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#satin-lustre)"/>
+  <rect width="400" height="400" fill="url(#satin-twill)"/>
+  <rect width="400" height="400" fill="url(#satin-highlight)"/>
+  <rect width="400" height="400" fill="none" stroke="#C5A059" stroke-width="1" stroke-opacity="0.25"/>
+</svg>

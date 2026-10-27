@@ -1,4 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import fs from 'fs';
+import path from 'path';
 import { brandTokens } from '../lib/tokens';
 import { detectGraphicsCapabilities } from '../components/canvas/ClothSandboxBoot';
 
@@ -152,5 +154,41 @@ describe('WebGPU Lifecycle & Tiered Graphics Boot Check', () => {
 
     const result = await detectGraphicsCapabilities(mockCanvas);
     expect(result.tier).toBe('fallback-media');
+  });
+
+  it('contains all 10 official brand assets and favicon in apps/web/public/brand/', () => {
+    const brandDir = path.resolve(__dirname, '../public/brand');
+    const requiredAssets = [
+      'monogram.svg',
+      'monogram-gold.svg',
+      'monogram-dark.svg',
+      'lockup-horizontal.svg',
+      'lockup-horizontal-dark.svg',
+      'wordmark.svg',
+      'wordmark-dark.svg',
+      'app-icon.png',
+      'favicon.ico',
+      'favicon.svg',
+    ];
+    for (const asset of requiredAssets) {
+      expect(fs.existsSync(path.join(brandDir, asset)), `Asset missing: ${asset}`).toBe(true);
+    }
+  });
+
+  it('contains high-quality distinct SVG textile swatches in apps/web/public/textures/fabrics/', () => {
+    const textureDir = path.resolve(__dirname, '../public/textures/fabrics');
+    const requiredSwatches = [
+      'silk-jacquard.svg',
+      'ivory-satin.svg',
+      'charcoal-wool.svg',
+      'obsidian-velvet.svg',
+      'heritage-linen.svg',
+      'camel-cashmere.svg',
+      'champagne-cupro.svg',
+      'venetian-brocade.svg',
+    ];
+    for (const swatch of requiredSwatches) {
+      expect(fs.existsSync(path.join(textureDir, swatch)), `Swatch missing: ${swatch}`).toBe(true);
+    }
   });
 });

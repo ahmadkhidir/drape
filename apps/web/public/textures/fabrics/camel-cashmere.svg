@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="camel-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C9A070"/>
+      <stop offset="50%" stop-color="#B88E5E"/>
+      <stop offset="100%" stop-color="#A67B4C"/>
+    </linearGradient>
+    <pattern id="twill-ribs" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="16" height="16" fill="#B88E5E"/>
+      <line x1="0" y1="0" x2="16" y2="0" stroke="#DFB98A" stroke-width="2.5"/>
+      <line x1="0" y1="4" x2="16" y2="4" stroke="#8E6536" stroke-width="1.8"/>
+      <line x1="0" y1="8" x2="16" y2="8" stroke="#D2A877" stroke-width="2.2"/>
+      <line x1="0" y1="12" x2="16" y2="12" stroke="#9E7342" stroke-width="1.5"/>
+    </pattern>
+    <radialGradient id="cashmere-soft" cx="45%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.25"/>
+      <stop offset="70%" stop-color="#805526" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#5E3E18" stop-opacity="0.4"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#camel-bg)"/>
+  <rect width="400" height="400" fill="url(#twill-ribs)"/>
+  <rect width="400" height="400" fill="url(#cashmere-soft)"/>
+  <rect width="400" height="400" fill="none" stroke="#C5A059" stroke-width="1" stroke-opacity="0.3"/>
+</svg>

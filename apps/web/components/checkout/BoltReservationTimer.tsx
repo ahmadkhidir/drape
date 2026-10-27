@@ -163,7 +163,7 @@ export const BoltReservationTimer: React.FC<BoltReservationTimerProps> = ({
 
       <div className="flex items-center justify-between text-[11px] text-grey-500 mt-1.5 font-mono">
         <span>Reserved: {requestedYards} yds</span>
-        <span>Redis Lock: {lockId ? `${lockId.slice(0, 10)}...` : 'Allocating...'}</span>
+        <span>Vault Hold Certificate: #{lockId ? `${lockId.slice(0, 10)}...` : 'Allocating...'}</span>
       </div>
 
       {/* Warning Toast when under 2 minutes remain */}

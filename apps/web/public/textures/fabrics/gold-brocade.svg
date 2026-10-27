@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="brocade-base" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3D2E14"/>
+      <stop offset="40%" stop-color="#5C451D"/>
+      <stop offset="80%" stop-color="#2D210D"/>
+      <stop offset="100%" stop-color="#1F1607"/>
+    </linearGradient>
+    <linearGradient id="venetian-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFEBB0"/>
+      <stop offset="45%" stop-color="#D4AF37"/>
+      <stop offset="75%" stop-color="#AA8012"/>
+      <stop offset="100%" stop-color="#705206"/>
+    </linearGradient>
+    <pattern id="damask-brocade" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M50 10 C45 25 35 30 25 35 C35 45 42 42 50 60 C58 42 65 45 75 35 C65 30 55 25 50 10 Z" fill="url(#venetian-gold)" fill-opacity="0.85"/>
+      <path d="M50 60 C38 68 30 78 35 90 C45 85 48 78 50 72 C52 78 55 85 65 90 C70 78 62 68 50 60 Z" fill="url(#venetian-gold)" fill-opacity="0.7"/>
+      <circle cx="0" cy="0" r="10" fill="url(#venetian-gold)" fill-opacity="0.5"/>
+      <circle cx="100" cy="0" r="10" fill="url(#venetian-gold)" fill-opacity="0.5"/>
+      <circle cx="0" cy="100" r="10" fill="url(#venetian-gold)" fill-opacity="0.5"/>
+      <circle cx="100" cy="100" r="10" fill="url(#venetian-gold)" fill-opacity="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="400" fill="url(#brocade-base)"/>
+  <rect width="400" height="400" fill="url(#damask-brocade)"/>
+  <rect width="400" height="400" fill="none" stroke="#D4AF37" stroke-width="1.5" stroke-opacity="0.4"/>
+</svg>

@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation';
 import { FabricDetail } from '../../../lib/catalog-types';
 import { fetchFabric } from '../../../lib/catalog-data';
 import { SensoryProfileRadar } from '../../../components/catalog/SensoryProfileRadar';
-import { ClothSandboxBoot } from '../../../components/canvas/ClothSandboxBoot';
+import { ClothSandbox } from '../../../components/canvas/ClothSandbox';
 
 /**
  * Screen 3: Fabric Detail View
@@ -119,12 +119,20 @@ export default function FabricDetailPage() {
       {/* Atelier Navigation Header */}
       <header className="sticky top-0 z-40 w-full border-b border-grey-300/60 dark:border-grey-700/60 bg-alabaster/90 dark:bg-obsidian/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
-          <Link href="/catalog" className="inline-flex items-center space-x-2 text-xs font-sans uppercase tracking-wider text-grey-600 dark:text-grey-400 hover:text-gold transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            <span>Back to Catalog</span>
-          </Link>
+          <div className="flex items-center space-x-6">
+            <Link href="/" className="flex items-center space-x-3 group">
+              <img src="/brand/monogram-gold.svg" alt="Drape Atelier Monogram" className="h-8 w-8 object-contain" />
+              <span className="font-display text-xl tracking-widest text-ink dark:text-alabaster uppercase font-semibold hidden sm:inline">
+                DRAPE
+              </span>
+            </Link>
+            <Link href="/catalog" className="inline-flex items-center space-x-2 text-xs font-sans uppercase tracking-wider text-grey-600 dark:text-grey-400 hover:text-gold transition-colors">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span>Back to Catalog</span>
+            </Link>
+          </div>
 
           <nav className="hidden md:flex items-center space-x-2 text-xs font-sans uppercase tracking-wider text-grey-500">
             <Link href="/" className="hover:text-gold transition-colors">Atelier</Link>
@@ -200,8 +208,17 @@ export default function FabricDetailPage() {
               {/* Canvas Viewport */}
               <div className="aspect-[4/3] sm:aspect-[16/10] w-full relative">
                 {activeTab === '3d' ? (
-                  <div className="w-full h-full flex flex-col items-center justify-center p-6 text-alabaster bg-gradient-to-b from-[#1C1F26] to-[#11100F]">
-                    <ClothSandboxBoot />
+                  <div className="w-full h-full relative">
+                    <ClothSandbox
+                      fabricId={fabric.id}
+                      fabricName={fabric.name}
+                      gsm={fabric.gsm}
+                      composition={fabric.fiberBreakdown}
+                      weaveType={fabric.weaveStructure}
+                      drapeCoefficient={fabric.drapeCoefficient}
+                      stiffnessRating={fabric.stiffnessRating}
+                      className="w-full h-full min-h-[440px]"
+                    />
                   </div>
                 ) : (
                   <div

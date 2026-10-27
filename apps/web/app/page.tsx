@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { ClothSandbox } from '../components/canvas/ClothSandbox';
 import { MicroWeaveInspector } from '../components/canvas/MicroWeaveInspector';
 
@@ -84,12 +85,12 @@ export default function AtelierHomePage() {
       <header className="sticky top-0 z-40 w-full border-b border-grey-300/60 dark:border-grey-700/60 bg-alabaster/80 dark:bg-obsidian/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
           {/* Brand Mark & Monogram Lockup */}
-          <a href="/" className="flex items-center space-x-3">
+          <Link href="/" className="flex items-center space-x-3">
             <img src="/brand/monogram-gold.svg" alt="Drape Atelier Monogram" className="h-8 w-8 object-contain" />
             <span className="font-display text-xl tracking-widest text-ink dark:text-alabaster uppercase font-semibold">
               DRAPE
             </span>
-          </a>
+          </Link>
 
           {/* Editorial Navigation */}
           <nav className="hidden md:flex items-center space-x-8 text-sm font-medium tracking-wide text-grey-700 dark:text-grey-300">
@@ -142,7 +143,7 @@ export default function AtelierHomePage() {
               </h1>
 
               <p className="font-sans text-base sm:text-lg text-grey-600 dark:text-grey-400 leading-relaxed max-w-xl">
-                Immerse yourself in the world's most coveted European textiles.
+                Immerse yourself in the world&apos;s most coveted European textiles.
                 Experience the tactile weight of Como silk and the structured drape
                 of Savile Row wools with lifelike fidelity before the first precision cut.
               </p>

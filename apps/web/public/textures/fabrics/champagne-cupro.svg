@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="champagne-sheer" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBF8F2"/>
+      <stop offset="30%" stop-color="#F4ECE0"/>
+      <stop offset="70%" stop-color="#ECE1CF"/>
+      <stop offset="100%" stop-color="#F7F1E6"/>
+    </linearGradient>
+    <pattern id="chiffon-mesh" width="6" height="6" patternUnits="userSpaceOnUse">
+      <rect width="6" height="6" fill="#F4ECE0" fill-opacity="0.8"/>
+      <line x1="0" y1="3" x2="6" y2="3" stroke="#D9C9B4" stroke-width="0.75" stroke-opacity="0.5"/>
+      <line x1="3" y1="0" x2="3" y2="6" stroke="#D9C9B4" stroke-width="0.75" stroke-opacity="0.5"/>
+    </pattern>
+    <radialGradient id="chiffon-gleam" cx="35%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.7"/>
+      <stop offset="45%" stop-color="#F9F3EA" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#DDCBBA" stop-opacity="0.2"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#champagne-sheer)"/>
+  <rect width="400" height="400" fill="url(#chiffon-mesh)"/>
+  <rect width="400" height="400" fill="url(#chiffon-gleam)"/>
+  <rect width="400" height="400" fill="none" stroke="#C5A059" stroke-width="1" stroke-opacity="0.2"/>
+</svg>
