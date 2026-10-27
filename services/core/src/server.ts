@@ -11,6 +11,7 @@ import { healthRoutes } from './routes/health.js';
 import { authRoutes } from './routes/auth.js';
 import { consentRoutes } from './routes/consents.js';
 import { checkoutRoutes } from './routes/checkout.js';
+import { yardageRoutes } from './routes/yardage.js';
 
 export interface BuildServerOptions {
   fastifyOptions?: FastifyServerOptions;
@@ -52,6 +53,9 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
     redisClient: options.redisClient,
     stripeClient: options.stripeClient,
   });
+
+  // Register algorithmic yardage calculation and pattern layout routes (C-016)
+  await server.register(yardageRoutes);
 
   return server;
 }

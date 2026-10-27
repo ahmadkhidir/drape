@@ -94,6 +94,34 @@ class CircuitBreakerOpenError(Exception):
     """Raised when circuit breaker trips due to repeated downstream worker failures."""
 
 
+class DrapePipelineError(Exception):
+    """Base exception for neural draping pipeline errors."""
+
+
+class SafetyFilterRejectedError(DrapePipelineError):
+    """Raised when customer photo violates neural safety guidelines."""
+
+    error_code = FittingErrorCode.SAFETY_FILTER_REJECTED
+
+
+class PoseEstimationError(DrapePipelineError):
+    """Raised when customer pose or anatomical landmarks cannot be extracted."""
+
+    error_code = FittingErrorCode.POSE_ESTIMATION_FAILED
+
+
+class WorkerTimeoutError(DrapePipelineError):
+    """Raised when GPU or worker computation exceeds allotted deadline budget."""
+
+    error_code = FittingErrorCode.TIMEOUT_EXCEEDED
+
+
+class GpuOutOfMemoryError(DrapePipelineError):
+    """Raised when GPU VRAM or host memory is exhausted during inference pass."""
+
+    error_code = FittingErrorCode.GPU_OUT_OF_MEMORY
+
+
 class FittingCircuitBreaker:
     """Circuit breaker guarding GPU worker calls with deadline timeouts and fallback routing."""
 
@@ -197,11 +225,23 @@ class FittingCircuitBreaker:
             )
         except Exception as exc:
             self.record_failure()
-            # General worker exception downgraded to structured fallback
+            err_code = getattr(exc, "error_code", None)
+            if err_code is not None and isinstance(err_code, FittingErrorCode):
+                resolved_code = err_code
+            elif err_code is not None:
+                try:
+                    resolved_code = FittingErrorCode(str(err_code))
+                except ValueError:
+                    resolved_code = FittingErrorCode.POSE_ESTIMATION_FAILED
+            else:
+                resolved_code = FittingErrorCode.POSE_ESTIMATION_FAILED
+
             return MannequinFallbackSelector.create_fallback_payload(
                 job_id=job_id,
-                error_code=FittingErrorCode.POSE_ESTIMATION_FAILED,
-                error_message=f"Neural fitting worker encountered unexpected condition: {exc}",
+                error_code=resolved_code,
+                error_message=(
+                    str(exc) or f"Neural fitting worker encountered unexpected condition: {exc}"
+                ),
                 mannequin_preset=mannequin_preset,
                 silhouette_id=silhouette_id,
             )
