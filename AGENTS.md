@@ -245,6 +245,7 @@ appearance; that belongs to the frontend.
 ## Git and GitHub
 
 - `main` is protected. Work on a short-lived branch and open a PR.
+- Branch naming: `<class>/<issue-number>-<slug>` where `<class>` matches the task class (`implement`, `fix`, `verify`, `spec`, `chore`), `<issue-number>` is the GitHub issue number without `#`, and `<slug>` is a short kebab-case description or spec anchor (e.g. `implement/12-feat-001-auth`, `fix/45-session-ttl`, `verify/60-phase-0-gate`).
 - Conventional Commits. Commits link the spec and the issue: e.g. `Implements: FEAT-###` and `Fixes #<n>`.
 - Commit only the paths the issue owns. Never `git add -A`.
 - A PR carries the issue number, the `C-###` it conforms to (when contracts exist), and the checks run.
