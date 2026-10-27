@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import fastify, { type FastifyInstance, type FastifyServerOptions } from 'fastify';
 import cors from '@fastify/cors';
 import { healthRoutes } from './routes/health.js';
+import { yardageRoutes } from './routes/yardage.js';
 
 export interface BuildServerOptions {
   fastifyOptions?: FastifyServerOptions;
@@ -34,6 +35,9 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
   await server.register(healthRoutes, {
     checkDbLive: options.checkDbLive,
   });
+
+  // Register algorithmic yardage calculation and pattern layout routes (C-016)
+  await server.register(yardageRoutes);
 
   return server;
 }
