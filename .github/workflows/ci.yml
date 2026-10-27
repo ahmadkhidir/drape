@@ -1,0 +1,152 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint & Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Node dependencies
+        run: |
+          if [ -f "package.json" ]; then
+            pnpm install --no-frozen-lockfile
+          else
+            echo "package.json not found; skipping pnpm install"
+          fi
+
+      - name: Run Node Lint
+        run: |
+          if [ -f "package.json" ]; then
+            if pnpm run | grep -q "lint"; then
+              pnpm lint
+            else
+              echo "No lint script defined in package.json"
+            fi
+          fi
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Python Lint (Ruff)
+        run: |
+          pip install ruff
+          if [ -d "services/neural-fitting" ]; then
+            ruff check services/neural-fitting
+          else
+            echo "services/neural-fitting not found; skipping ruff check"
+          fi
+
+  build:
+    name: Build Packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Node dependencies
+        run: |
+          if [ -f "package.json" ]; then
+            pnpm install --no-frozen-lockfile
+          else
+            echo "package.json not found; skipping pnpm install"
+          fi
+
+      - name: Run Build
+        run: |
+          if [ -f "package.json" ]; then
+            pnpm build
+          else
+            echo "package.json not found; skipping build"
+          fi
+
+  test:
+    name: Test Suites
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Node dependencies
+        run: |
+          if [ -f "package.json" ]; then
+            pnpm install --no-frozen-lockfile
+          else
+            echo "package.json not found; skipping pnpm install"
+          fi
+
+      - name: Run Node Tests
+        run: |
+          if [ -f "package.json" ]; then
+            pnpm test
+          else
+            echo "package.json not found; skipping pnpm test"
+          fi
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Python Tests (pytest)
+        run: |
+          pip install pytest
+          if [ -d "services/neural-fitting" ]; then
+            if [ -f "services/neural-fitting/pyproject.toml" ]; then
+              pip install -e services/neural-fitting || true
+            fi
+            pytest services/neural-fitting
+          else
+            echo "services/neural-fitting not found; skipping pytest"
+          fi
