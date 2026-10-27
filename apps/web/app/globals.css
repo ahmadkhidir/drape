@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #FBF9F5;
+  --foreground: #111318;
+  --surface: #FBF9F5;
+  --surface-secondary: #F6F4F0;
+  --border: #DCD6CC;
+  --accent: #C5A059;
+}
+
+.dark {
+  --background: #11100F;
+  --foreground: #FAF8F5;
+  --surface: #11100F;
+  --surface-secondary: #1B1A18;
+  --border: #3E3B37;
+  --accent: #DFBA72;
+}
+
+body {
+  color: var(--foreground);
+  background-color: var(--background);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Custom focus ring complying with WCAG 2.2 AA (2px accent-500 with 2px offset) */
+:focus-visible {
+  outline: 2px solid #C5A059;
+  outline-offset: 2px;
+}
