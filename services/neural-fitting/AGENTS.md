@@ -22,7 +22,7 @@ This directory and its subdirectories. The issue's `Own` paths are binding; ever
 - If a contract is wrong or incomplete, report a change request; never deviate.
 - Execute strictly against the assigned issue contract. Never modify files outside your owned paths. If feedback or findings uncover defects outside your scope, report back to the coordinator for triage rather than performing out-of-scope edits.
 - Do not reinvent the wheel: prefer established, battle-tested ecosystem packages over bespoke implementations. Research standard libraries and agree with the user before adding or changing external dependencies.
-- Packages and dependencies belong strictly in this area's coordinating manifest, never in `AGENTS.md`.
+- Packages and dependencies belong strictly in this area's manifest (pyproject.toml), never in `AGENTS.md`.
 - If blocked, state the assumption or ask for clarification before proceeding.
 - When a fact resists you, verify it with evidence before falling back on recall.
 - User-facing copy reads as human-written.
