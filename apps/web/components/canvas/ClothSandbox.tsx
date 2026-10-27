@@ -27,6 +27,84 @@ export interface ClothSandboxProps {
   className?: string;
 }
 
+
+export function getFabricColorAndShine(nameOrId: string = ''): { color: number; roughness: number; metalness: number } {
+  const lower = nameOrId.toLowerCase();
+  if (lower.includes('ivory') || lower.includes('duchesse') || lower.includes('slk-01') || lower.includes('slk-401')) {
+    return { color: 0xf5f1e8, roughness: 0.26, metalness: 0.12 }; // Luminous Warm Ivory Duchesse Satin
+  }
+  if (lower.includes('velvet') || lower.includes('vlv')) {
+    return { color: 0x1a1c22, roughness: 0.65, metalness: 0.08 }; // Deep Midnight Noir Velvet
+  }
+  if (lower.includes('wool') || lower.includes('crepe') || lower.includes('wol')) {
+    return { color: 0x32343a, roughness: 0.58, metalness: 0.05 }; // Tailoring Charcoal Wool Crepe
+  }
+  if (lower.includes('emerald') || lower.includes('brocade')) {
+    return { color: 0x1b4332, roughness: 0.32, metalness: 0.22 }; // Rich Emerald Silk Brocade
+  }
+  if (lower.includes('linen') || lower.includes('lin')) {
+    return { color: 0xe6e0d5, roughness: 0.72, metalness: 0.02 }; // Natural Oatmeal Flax Linen
+  }
+  if (lower.includes('cashmere') || lower.includes('csh') || lower.includes('camel')) {
+    return { color: 0xc49a6c, roughness: 0.68, metalness: 0.05 }; // Rich Camel Cashmere
+  }
+  return { color: 0xf2ede4, roughness: 0.32, metalness: 0.15 }; // Default luminous luxury textile
+}
+
+export function createProceduralWeaveTexture(weaveType: string = 'satin'): { normalMap: THREE.CanvasTexture | null; bumpMap: THREE.CanvasTexture | null } {
+  if (typeof document === 'undefined') {
+    return { normalMap: null, bumpMap: null };
+  }
+  try {
+    const size = 256;
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.fillStyle = '#808080';
+      ctx.fillRect(0, 0, size, size);
+      const step = 8;
+      for (let y = 0; y < size; y += step) {
+        for (let x = 0; x < size; x += step) {
+          const isWarp = (Math.floor(x / step) + Math.floor(y / step)) % 2 === 0;
+          ctx.fillStyle = isWarp ? '#b0b0b0' : '#555555';
+          ctx.fillRect(x + 1, y + 1, step - 2, step - 2);
+        }
+      }
+    }
+    const bumpTexture = new THREE.CanvasTexture(canvas);
+    bumpTexture.wrapS = THREE.RepeatWrapping;
+    bumpTexture.wrapT = THREE.RepeatWrapping;
+    bumpTexture.repeat.set(24, 24);
+
+    const normalCanvas = document.createElement('canvas');
+    normalCanvas.width = size;
+    normalCanvas.height = size;
+    const nCtx = normalCanvas.getContext('2d');
+    if (nCtx) {
+      nCtx.fillStyle = '#8080ff';
+      nCtx.fillRect(0, 0, size, size);
+      const step = 8;
+      for (let y = 0; y < size; y += step) {
+        for (let x = 0; x < size; x += step) {
+          const isWarp = (Math.floor(x / step) + Math.floor(y / step)) % 2 === 0;
+          nCtx.fillStyle = isWarp ? '#9a70ff' : '#6894ff';
+          nCtx.fillRect(x + 1, y + 1, step - 2, step - 2);
+        }
+      }
+    }
+    const normalTexture = new THREE.CanvasTexture(normalCanvas);
+    normalTexture.wrapS = THREE.RepeatWrapping;
+    normalTexture.wrapT = THREE.RepeatWrapping;
+    normalTexture.repeat.set(24, 24);
+
+    return { normalMap: normalTexture, bumpMap: bumpTexture };
+  } catch {
+    return { normalMap: null, bumpMap: null };
+  }
+}
+
 export function ClothSandbox({
   fabricId = 'FAB-SLK-892',
   fabricName = 'Emerald Architectural Silk Brocade',
@@ -70,6 +148,7 @@ export function ClothSandbox({
       gridX: gridResolution,
       gridY: gridResolution,
       spacing,
+      pinMode: 'atelier_dual',
       physicsMatrix: {
         massDensity: gsm / 1000,
         bendingStiffness: stiffnessRating,
@@ -149,6 +228,21 @@ export function ClothSandbox({
     lastPointerPosRef.current = { x, y };
   };
 
+  
+  // Dynamic material color update when active fabric prop updates
+  useEffect(() => {
+    if (clothMeshRef.current) {
+      const mat = clothMeshRef.current.material as THREE.MeshStandardMaterial;
+      if (mat) {
+        const shine = getFabricColorAndShine(fabricName || fabricId);
+        mat.color.setHex(shine.color);
+        mat.roughness = shine.roughness;
+        mat.metalness = shine.metalness;
+        mat.needsUpdate = true;
+      }
+    }
+  }, [fabricId, fabricName]);
+
   const handlePointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (canvas && canvas.hasPointerCapture(e.pointerId)) {
@@ -193,17 +287,21 @@ export function ClothSandbox({
       camera.position.set(0, 0, 4.2);
       cameraRef.current = camera;
 
-      // Studio lighting setup per branding.md
-      const ambientLight = new THREE.AmbientLight(0xfbf9f5, 0.85); // Warm Alabaster
+      // Studio lighting setup per branding.md - calibrated for bright luxury luster
+      const ambientLight = new THREE.AmbientLight(0xffffff, 1.4); // Bright clear ambient
       scene.add(ambientLight);
 
-      const keyLight = new THREE.DirectionalLight(0xfff6e5, 1.2);
-      keyLight.position.set(2, 3, 3);
+      const keyLight = new THREE.DirectionalLight(0xfff8ee, 2.0); // Warm primary key light
+      keyLight.position.set(3, 4, 4);
       scene.add(keyLight);
 
-      const fillLight = new THREE.DirectionalLight(0xc5a059, 0.6); // Spun Gold accent fill
-      fillLight.position.set(-3, -1, 2);
+      const fillLight = new THREE.DirectionalLight(0xe5d0b0, 1.2); // Warm champagne gold accent fill
+      fillLight.position.set(-3, 1, 3);
       scene.add(fillLight);
+
+      const rimLight = new THREE.DirectionalLight(0xffffff, 0.9); // Back rim light highlighting fold contours
+      rimLight.position.set(0, -3, -3);
+      scene.add(rimLight);
 
       // Create pre-allocated BufferGeometry using typed arrays from engine
       const geometry = new THREE.BufferGeometry();
@@ -220,12 +318,18 @@ export function ClothSandbox({
 
       geometry.setIndex(new THREE.BufferAttribute(engine.indices, 1));
 
-      // Luxury satin/silk material shader with anisotropic sheen
+      const fabricShine = getFabricColorAndShine(fabricName || fabricId);
+      const { normalMap, bumpMap } = createProceduralWeaveTexture(weaveType);
+
+      // Luxury satin/silk material shader with calibrated luster and tactile micro-weave
       const material = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(0x1a2e26), // Emerald Silk Brocade base
-        roughness: 0.35,
-        metalness: 0.25,
+        color: new THREE.Color(fabricShine.color),
+        roughness: fabricShine.roughness,
+        metalness: fabricShine.metalness,
         side: THREE.DoubleSide,
+        normalMap: normalMap || undefined,
+        bumpMap: bumpMap || undefined,
+        bumpScale: 0.04,
       });
 
       const mesh = new THREE.Mesh(geometry, material);

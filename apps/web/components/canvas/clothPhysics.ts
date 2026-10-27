@@ -16,6 +16,7 @@ export interface ClothGridConfig {
   gridY: number; // number of particles along Y
   spacing: number; // rest distance between adjacent particles
   physicsMatrix: PhysicsMatrix;
+  pinMode?: 'atelier_dual' | 'corners_and_center';
 }
 
 export class VerletClothEngine {
@@ -23,6 +24,7 @@ export class VerletClothEngine {
   public readonly gridY: number;
   public readonly particleCount: number;
   public readonly spacing: number;
+  public readonly pinMode: 'atelier_dual' | 'corners_and_center';
 
   // Zero-allocation pre-allocated typed buffers
   public readonly positions: Float32Array; // x, y, z per particle [N * 3]
@@ -77,6 +79,7 @@ export class VerletClothEngine {
     this.gridX = config.gridX;
     this.gridY = config.gridY;
     this.spacing = config.spacing;
+    this.pinMode = config.pinMode || 'corners_and_center'
     this.particleCount = this.gridX * this.gridY;
 
     // Allocate continuous typed arrays
@@ -153,11 +156,21 @@ export class VerletClothEngine {
         this.uvs[uvIdx] = x / (this.gridX - 1);
         this.uvs[uvIdx + 1] = 1 - y / (this.gridY - 1);
 
-        // Pin the top left and top right corners by default to simulate draped suspension
-        if (y === 0 && (x === 0 || x === this.gridX - 1 || x === Math.floor(this.gridX / 2))) {
-          this.pinned[idx] = 1;
+        // Pin suspension points based on pinMode
+        if (this.pinMode === 'atelier_dual') {
+          const pinLeft = Math.round(this.gridX * 0.22);
+          const pinRight = Math.round(this.gridX * 0.78);
+          if (y === 0 && (x === pinLeft || x === pinRight)) {
+            this.pinned[idx] = 1;
+          } else {
+            this.pinned[idx] = 0;
+          }
         } else {
-          this.pinned[idx] = 0;
+          if (y === 0 && (x === 0 || x === this.gridX - 1 || x === Math.floor(this.gridX / 2))) {
+            this.pinned[idx] = 1;
+          } else {
+            this.pinned[idx] = 0;
+          }
         }
       }
     }

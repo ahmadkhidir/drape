@@ -84,15 +84,12 @@ export default function AtelierHomePage() {
       <header className="sticky top-0 z-40 w-full border-b border-grey-300/60 dark:border-grey-700/60 bg-alabaster/80 dark:bg-obsidian/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
           {/* Brand Mark & Monogram Lockup */}
-          <div className="flex items-center space-x-3">
-            {/* Sculptural D Monogram Ribbon */}
-            <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-ink dark:bg-alabaster text-alabaster dark:text-ink font-display text-xl font-bold tracking-tight shadow-sm">
-              D
-            </div>
+          <a href="/" className="flex items-center space-x-3">
+            <img src="/brand/monogram-gold.svg" alt="Drape Atelier Monogram" className="h-8 w-8 object-contain" />
             <span className="font-display text-xl tracking-widest text-ink dark:text-alabaster uppercase font-semibold">
               DRAPE
             </span>
-          </div>
+          </a>
 
           {/* Editorial Navigation */}
           <nav className="hidden md:flex items-center space-x-8 text-sm font-medium tracking-wide text-grey-700 dark:text-grey-300">
@@ -145,9 +142,9 @@ export default function AtelierHomePage() {
               </h1>
 
               <p className="font-sans text-base sm:text-lg text-grey-600 dark:text-grey-400 leading-relaxed max-w-xl">
-                Experience luxury European textiles with real-time WebGPU cloth physics.
-                Explore the gravitational cascade, micro-weave fiber nap, and bespoke fit
-                of Como silks and Savile Row worsted wools before cutting.
+                Immerse yourself in the world's most coveted European textiles.
+                Experience the tactile weight of Como silk and the structured drape
+                of Savile Row wools with lifelike fidelity before the first precision cut.
               </p>
 
               {/* Action Hierarchy */}
@@ -174,8 +171,8 @@ export default function AtelierHomePage() {
                   <span>Direct European Mills</span>
                 </div>
                 <div>
-                  <span className="block font-semibold text-ink dark:text-alabaster">60 FPS Simulation</span>
-                  <span>WGSL WebGPU Compute</span>
+                  <span className="block font-semibold text-ink dark:text-alabaster">Kinetic Drape Fidelity</span>
+                  <span>Continuous Fluid Motion</span>
                 </div>
                 <div>
                   <span className="block font-semibold text-ink dark:text-alabaster">Bespoke Accuracy</span>
