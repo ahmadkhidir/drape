@@ -32,6 +32,12 @@ jobs:
         with:
           node-version: 20
 
+      - name: Ensure packageManager is set
+        run: |
+          if [ -f "package.json" ]; then
+            node -e 'const fs = require("fs"); const pkg = JSON.parse(fs.readFileSync("package.json", "utf8")); if (!pkg.packageManager) { pkg.packageManager = "pnpm@9.15.4"; fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n"); }'
+          fi
+
       - name: Install Node dependencies
         run: |
           if [ -f "package.json" ]; then
@@ -58,10 +64,10 @@ jobs:
       - name: Run Python Lint (Ruff)
         run: |
           pip install ruff
-          if [ -d "services/neural-fitting" ]; then
+          if [ -d "services/neural-fitting" ] && [ -n "$(find services/neural-fitting -name '*.py' 2>/dev/null)" ]; then
             ruff check services/neural-fitting
           else
-            echo "services/neural-fitting not found; skipping ruff check"
+            echo "services/neural-fitting has no python files; skipping ruff check"
           fi
 
   build:
@@ -82,6 +88,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      - name: Ensure packageManager is set
+        run: |
+          if [ -f "package.json" ]; then
+            node -e 'const fs = require("fs"); const pkg = JSON.parse(fs.readFileSync("package.json", "utf8")); if (!pkg.packageManager) { pkg.packageManager = "pnpm@9.15.4"; fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n"); }'
+          fi
 
       - name: Install Node dependencies
         run: |
@@ -118,6 +130,12 @@ jobs:
         with:
           node-version: 20
 
+      - name: Ensure packageManager is set
+        run: |
+          if [ -f "package.json" ]; then
+            node -e 'const fs = require("fs"); const pkg = JSON.parse(fs.readFileSync("package.json", "utf8")); if (!pkg.packageManager) { pkg.packageManager = "pnpm@9.15.4"; fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n"); }'
+          fi
+
       - name: Install Node dependencies
         run: |
           if [ -f "package.json" ]; then
@@ -142,11 +160,11 @@ jobs:
       - name: Run Python Tests (pytest)
         run: |
           pip install pytest
-          if [ -d "services/neural-fitting" ]; then
+          if [ -d "services/neural-fitting" ] && [ -n "$(find services/neural-fitting -name 'test_*.py' -o -name '*_test.py' 2>/dev/null)" ]; then
             if [ -f "services/neural-fitting/pyproject.toml" ]; then
               pip install -e services/neural-fitting || true
             fi
             pytest services/neural-fitting
           else
-            echo "services/neural-fitting not found; skipping pytest"
+            echo "services/neural-fitting has no python test files; skipping pytest"
           fi
