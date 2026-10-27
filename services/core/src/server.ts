@@ -1,17 +1,23 @@
 /**
  * Drape Core Fastify Server Factory
- * Spec Anchor: architecture.md, AGENTS.md
+ * Spec Anchor: architecture.md, AGENTS.md, C-001..C-024
  */
 
 import { fileURLToPath } from 'node:url';
 import fastify, { type FastifyInstance, type FastifyServerOptions } from 'fastify';
 import cors from '@fastify/cors';
+import type { Redis } from 'ioredis';
 import { healthRoutes } from './routes/health.js';
+import { authRoutes } from './routes/auth.js';
+import { consentRoutes } from './routes/consents.js';
+import { checkoutRoutes } from './routes/checkout.js';
 import { yardageRoutes } from './routes/yardage.js';
 
 export interface BuildServerOptions {
   fastifyOptions?: FastifyServerOptions;
   checkDbLive?: boolean;
+  redisClient?: Redis;
+  stripeClient?: any;
 }
 
 /**
@@ -34,6 +40,18 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
   // Register baseline health and operational routes
   await server.register(healthRoutes, {
     checkDbLive: options.checkDbLive,
+  });
+
+  // Register authentication routes (C-001, C-003)
+  await server.register(authRoutes);
+
+  // Register biometric consent routes (C-004, C-005, C-006)
+  await server.register(consentRoutes);
+
+  // Register checkout and order processing routes (C-019..C-024)
+  await server.register(checkoutRoutes, {
+    redisClient: options.redisClient,
+    stripeClient: options.stripeClient,
   });
 
   // Register algorithmic yardage calculation and pattern layout routes (C-016)
