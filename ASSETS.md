@@ -5,16 +5,16 @@ The asset ledger. One row per slot (`A-###`). The user is the sole authority on 
 
 | Slot | File | Family / Variant | Status |
 |---|---|---|---|
-| A-001 | assets/brand/monogram.svg | Brand Mark & Monogram / Master | Pending |
-| A-002 | assets/brand/monogram-dark.svg | Brand Mark & Monogram / Knockout | Pending |
-| A-003 | assets/brand/monogram-gold.svg | Brand Mark & Monogram / Embossed Gold Seal | Pending |
-| A-004 | assets/brand/app-icon.png | Brand Mark & Monogram / App Icon | Pending |
-| A-005 | assets/brand/favicon.ico | Brand Mark & Monogram / Favicon Multi-Size | Pending |
-| A-006 | assets/brand/favicon.svg | Brand Mark & Monogram / Vector Favicon | Pending |
-| A-007 | assets/brand/lockup-horizontal.svg | Brand Typography & Lockups / Primary Horizontal Lockup (Light) | Pending |
-| A-008 | assets/brand/lockup-horizontal-dark.svg | Brand Typography & Lockups / Primary Horizontal Lockup (Dark) | Pending |
-| A-009 | assets/brand/wordmark.svg | Brand Typography & Lockups / Editorial Wordmark Masthead (Light) | Pending |
-| A-010 | assets/brand/wordmark-dark.svg | Brand Typography & Lockups / Editorial Wordmark Masthead (Dark) | Pending |
+| A-001 | assets/brand/monogram.svg | Brand Mark & Monogram / Master | Done |
+| A-002 | assets/brand/monogram-dark.svg | Brand Mark & Monogram / Knockout | Done |
+| A-003 | assets/brand/monogram-gold.svg | Brand Mark & Monogram / Embossed Gold Seal | Done |
+| A-004 | assets/brand/app-icon.png | Brand Mark & Monogram / App Icon | Done |
+| A-005 | assets/brand/favicon.ico | Brand Mark & Monogram / Favicon Multi-Size | Done |
+| A-006 | assets/brand/favicon.svg | Brand Mark & Monogram / Vector Favicon | Done |
+| A-007 | assets/brand/lockup-horizontal.svg | Brand Typography & Lockups / Primary Horizontal Lockup (Light) | Done |
+| A-008 | assets/brand/lockup-horizontal-dark.svg | Brand Typography & Lockups / Primary Horizontal Lockup (Dark) | Done |
+| A-009 | assets/brand/wordmark.svg | Brand Typography & Lockups / Editorial Wordmark Masthead (Light) | Done |
+| A-010 | assets/brand/wordmark-dark.svg | Brand Typography & Lockups / Editorial Wordmark Masthead (Dark) | Done |
 | A-011 | assets/editorial/hero-cascade.jpg | Editorial Still Photography / Atelier Hero Cascade | Pending |
 | A-012 | assets/editorial/empty-wardrobe.jpg | Editorial Still Photography / Empty Wardrobe Atelier | Pending |
 | A-013 | assets/editorial/fabric-macro-selvage.jpg | Editorial Still Photography / Macro Weave Selvage | Pending |
