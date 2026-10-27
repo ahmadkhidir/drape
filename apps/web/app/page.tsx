@@ -1,11 +1,87 @@
-import React from 'react';
-import { ClothSandboxBoot } from '../components/canvas/ClothSandboxBoot';
+'use client';
+
+import React, { useState } from 'react';
+import { ClothSandbox } from '../components/canvas/ClothSandbox';
+import { MicroWeaveInspector } from '../components/canvas/MicroWeaveInspector';
+
+interface FabricItem {
+  id: string;
+  sku: string;
+  name: string;
+  millName: string;
+  origin: string;
+  fiberBreakdown: string;
+  threadCount: string;
+  gsm: number;
+  widthInches: number;
+  drapeCoefficient: number;
+  stiffnessRating: number;
+  pricePerYard: number;
+  description: string;
+}
+
+const FEATURED_BOLTS: FabricItem[] = [
+  {
+    id: 'DR-SLK-01',
+    sku: 'FAB-SLK-892',
+    name: 'Luminous Ivory Duchesse',
+    millName: 'Tessitura di Como',
+    origin: 'Como, Italy',
+    fiberBreakdown: '100% Mulberry Silk',
+    threadCount: '480 TPI (280 Warp / 200 Weft)',
+    gsm: 280,
+    widthInches: 54,
+    drapeCoefficient: 0.32,
+    stiffnessRating: 6.8,
+    pricePerYard: 145,
+    description: 'Heavyweight satin with high bending stiffness, sculpted architectural drape, and lustrous sheen.',
+  },
+  {
+    id: 'DR-VLV-04',
+    sku: 'FAB-VLV-104',
+    name: 'Midnight Noir Silk Velvet',
+    millName: 'Atelier de Soierie Lyonnaise',
+    origin: 'Lyon, France',
+    fiberBreakdown: '82% Rayon, 18% Mulberry Silk',
+    threadCount: '360 TPI (Tufted Cut-Pile)',
+    gsm: 360,
+    widthInches: 52,
+    drapeCoefficient: 0.78,
+    stiffnessRating: 2.1,
+    pricePerYard: 180,
+    description: 'Dense directional tufted pile with anisotropic light absorption and fluid cascading folds.',
+  },
+  {
+    id: 'DR-WOL-02',
+    sku: 'FAB-WOL-450',
+    name: 'Charcoal Fine Wool Crepe',
+    millName: 'Lanificio di Biella',
+    origin: 'Biella, Italy',
+    fiberBreakdown: '100% Super 150s Worsted Wool',
+    threadCount: '410 TPI (210 Warp / 200 Weft)',
+    gsm: 240,
+    widthInches: 58,
+    drapeCoefficient: 0.54,
+    stiffnessRating: 4.5,
+    pricePerYard: 120,
+    description: 'High-twist wool yarn providing crisp tailoring resilience, organic drape recovery, and breathable wear.',
+  },
+];
 
 export default function AtelierHomePage() {
+  const [activeFabric, setActiveFabric] = useState<FabricItem>(FEATURED_BOLTS[0]);
+  const [isMicroWeaveOpen, setIsMicroWeaveOpen] = useState<boolean>(false);
+  const [inspectingFabric, setInspectingFabric] = useState<FabricItem>(FEATURED_BOLTS[0]);
+
+  const handleOpenMicroWeave = (fabric: FabricItem) => {
+    setInspectingFabric(fabric);
+    setIsMicroWeaveOpen(true);
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-surface dark:bg-surface-dark transition-colors duration-300">
       {/* Atelier Luxury Header / Navigation */}
-      <header className="sticky top-0 z-50 w-full border-b border-grey-300/60 dark:border-grey-700/60 bg-alabaster/80 dark:bg-obsidian/80 backdrop-blur-md">
+      <header className="sticky top-0 z-40 w-full border-b border-grey-300/60 dark:border-grey-700/60 bg-alabaster/80 dark:bg-obsidian/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
           {/* Brand Mark & Monogram Lockup */}
           <div className="flex items-center space-x-3">
@@ -82,12 +158,13 @@ export default function AtelierHomePage() {
                 >
                   Explore Catalog
                 </a>
-                <a
-                  href="#neural-atelier"
+                <button
+                  type="button"
+                  onClick={() => handleOpenMicroWeave(activeFabric)}
                   className="inline-flex justify-center items-center px-8 py-3.5 rounded-md text-sm font-semibold tracking-wide text-ink dark:text-alabaster border border-grey-300 dark:border-grey-700 hover:border-gold hover:text-gold transition-all duration-200"
                 >
-                  How Neural Draping Works
-                </a>
+                  Inspect Weave (10x Optical)
+                </button>
               </div>
 
               {/* Provenance Micro-Trust Signals */}
@@ -110,12 +187,15 @@ export default function AtelierHomePage() {
             {/* Right Interactive WebGPU Canvas Column */}
             <div className="lg:col-span-7">
               <div className="relative rounded-lg p-2 bg-gradient-to-tr from-gold/15 via-transparent to-ink/5 dark:from-gold/10 dark:to-alabaster/5">
-                <ClothSandboxBoot
-                  fabricName="Luminous Silk Duchesse"
-                  gsm={280}
-                  composition="100% Mulberry Silk"
-                  weaveType="8-End Duchesse Satin"
-                  drapeCoefficient={0.32}
+                <ClothSandbox
+                  fabricId={activeFabric.sku}
+                  fabricName={activeFabric.name}
+                  gsm={activeFabric.gsm}
+                  composition={activeFabric.fiberBreakdown}
+                  weaveType="Duchesse Satin Weave"
+                  drapeCoefficient={activeFabric.drapeCoefficient}
+                  stiffnessRating={activeFabric.stiffnessRating}
+                  onInspectWeave={() => handleOpenMicroWeave(activeFabric)}
                   className="h-[520px] shadow-lg"
                 />
               </div>
@@ -149,76 +229,57 @@ export default function AtelierHomePage() {
             </div>
             <p className="mt-4 md:mt-0 text-sm text-grey-600 dark:text-grey-400 max-w-md">
               Each textile is rigorously scanned and physically profiled for gravitational drape,
-              tensile resistance, and light refraction.
+              tensile resistance, and light refraction. Click any bolt to calibrate the 3D physics simulator.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Card 1 */}
-            <div className="group rounded-lg border border-grey-300 dark:border-grey-700 bg-surface dark:bg-surface-dark overflow-hidden p-6 hover:shadow-md transition-shadow">
-              <div className="h-44 rounded-md bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950/30 dark:to-obsidian border border-amber-200/50 dark:border-amber-900/30 flex items-center justify-center mb-6">
-                <span className="font-display text-lg italic text-amber-800 dark:text-amber-200">
-                  Mulberry Silk Duchesse
-                </span>
-              </div>
-              <span className="text-[10px] uppercase font-bold tracking-widest text-gold block mb-1">
-                Como, Italy · SKU DR-SLK-01
-              </span>
-              <h3 className="font-display text-xl font-semibold text-ink dark:text-alabaster mb-2">
-                Luminous Ivory Duchesse
-              </h3>
-              <p className="text-xs text-grey-600 dark:text-grey-400 mb-4 font-sans">
-                Heavyweight satin with high bending stiffness, sculpted architectural drape, and lustrous sheen.
-              </p>
-              <div className="flex items-center justify-between text-xs pt-4 border-t border-grey-300/50 dark:border-grey-700/50 font-sans">
-                <span className="font-medium text-ink dark:text-alabaster">280 GSM · 54″ Width</span>
-                <span className="font-semibold text-gold">$145 / yard</span>
-              </div>
-            </div>
+            {FEATURED_BOLTS.map((fabric) => (
+              <div
+                key={fabric.id}
+                className={`group rounded-lg border bg-surface dark:bg-surface-dark overflow-hidden p-6 transition-all cursor-pointer ${
+                  activeFabric.id === fabric.id
+                    ? 'border-gold shadow-md ring-1 ring-gold/40'
+                    : 'border-grey-300 dark:border-grey-700 hover:shadow-md hover:border-grey-400'
+                }`}
+                onClick={() => setActiveFabric(fabric)}
+              >
+                <div className="h-44 rounded-md bg-gradient-to-br from-amber-50 to-amber-100 dark:from-neutral-900 dark:to-obsidian border border-grey-300/40 dark:border-grey-800 flex items-center justify-center mb-6 relative overflow-hidden">
+                  <span className="font-display text-lg italic text-ink dark:text-alabaster">
+                    {fabric.name}
+                  </span>
+                  <div className="absolute bottom-2 right-2 flex space-x-1">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenMicroWeave(fabric);
+                      }}
+                      className="px-2 py-1 rounded bg-obsidian/80 hover:bg-gold hover:text-ink text-alabaster text-[10px] uppercase font-semibold tracking-wider transition-colors shadow-sm"
+                      aria-label={`Inspect weave for ${fabric.name}`}
+                    >
+                      10x Weave
+                    </button>
+                  </div>
+                </div>
 
-            {/* Card 2 */}
-            <div className="group rounded-lg border border-grey-300 dark:border-grey-700 bg-surface dark:bg-surface-dark overflow-hidden p-6 hover:shadow-md transition-shadow">
-              <div className="h-44 rounded-md bg-gradient-to-br from-neutral-800 to-black border border-neutral-700/50 flex items-center justify-center mb-6">
-                <span className="font-display text-lg italic text-neutral-200">
-                  Obsidian Cut-Pile Velvet
+                <span className="text-[10px] uppercase font-bold tracking-widest text-gold block mb-1">
+                  {fabric.origin} · SKU {fabric.id}
                 </span>
+                <h3 className="font-display text-xl font-semibold text-ink dark:text-alabaster mb-2">
+                  {fabric.name}
+                </h3>
+                <p className="text-xs text-grey-600 dark:text-grey-400 mb-4 font-sans">
+                  {fabric.description}
+                </p>
+                <div className="flex items-center justify-between text-xs pt-4 border-t border-grey-300/50 dark:border-grey-700/50 font-sans">
+                  <span className="font-medium text-ink dark:text-alabaster">
+                    {fabric.gsm} GSM · {fabric.widthInches}″ Width
+                  </span>
+                  <span className="font-semibold text-gold">${fabric.pricePerYard} / yard</span>
+                </div>
               </div>
-              <span className="text-[10px] uppercase font-bold tracking-widest text-gold block mb-1">
-                Lyon, France · SKU DR-VLV-04
-              </span>
-              <h3 className="font-display text-xl font-semibold text-ink dark:text-alabaster mb-2">
-                Midnight Noir Silk Velvet
-              </h3>
-              <p className="text-xs text-grey-600 dark:text-grey-400 mb-4 font-sans">
-                Dense directional tufted pile with anisotropic light absorption and fluid cascading folds.
-              </p>
-              <div className="flex items-center justify-between text-xs pt-4 border-t border-grey-300/50 dark:border-grey-700/50 font-sans">
-                <span className="font-medium text-ink dark:text-alabaster">360 GSM · 52″ Width</span>
-                <span className="font-semibold text-gold">$180 / yard</span>
-              </div>
-            </div>
-
-            {/* Card 3 */}
-            <div className="group rounded-lg border border-grey-300 dark:border-grey-700 bg-surface dark:bg-surface-dark overflow-hidden p-6 hover:shadow-md transition-shadow">
-              <div className="h-44 rounded-md bg-gradient-to-br from-stone-200 to-stone-300 dark:from-stone-900/40 dark:to-obsidian border border-stone-300/50 dark:border-stone-800 flex items-center justify-center mb-6">
-                <span className="font-display text-lg italic text-stone-800 dark:text-stone-300">
-                  Super 150s Worsted Crepe
-                </span>
-              </div>
-              <span className="text-[10px] uppercase font-bold tracking-widest text-gold block mb-1">
-                Biella, Italy · SKU DR-WOL-02
-              </span>
-              <h3 className="font-display text-xl font-semibold text-ink dark:text-alabaster mb-2">
-                Charcoal Fine Wool Crepe
-              </h3>
-              <p className="text-xs text-grey-600 dark:text-grey-400 mb-4 font-sans">
-                High-twist wool yarn providing crisp tailoring resilience, organic drape recovery, and breathable wear.
-              </p>
-              <div className="flex items-center justify-between text-xs pt-4 border-t border-grey-300/50 dark:border-grey-700/50 font-sans">
-                <span className="font-medium text-ink dark:text-alabaster">240 GSM · 58″ Width</span>
-                <span className="font-semibold text-gold">$120 / yard</span>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
       </main>
@@ -236,6 +297,18 @@ export default function AtelierHomePage() {
           <p>© 2026 Drape Atelier. All rights reserved. Architectural and digital tailoring provenance.</p>
         </div>
       </footer>
+
+      {/* Micro-Weave Inspector Modal Overlay (FEAT-003, C-010) */}
+      <MicroWeaveInspector
+        isOpen={isMicroWeaveOpen}
+        onClose={() => setIsMicroWeaveOpen(false)}
+        fabricId={inspectingFabric.sku}
+        fabricName={inspectingFabric.name}
+        millName={inspectingFabric.millName}
+        fiberBreakdown={inspectingFabric.fiberBreakdown}
+        threadCount={inspectingFabric.threadCount}
+        gsm={inspectingFabric.gsm}
+      />
     </div>
   );
 }
