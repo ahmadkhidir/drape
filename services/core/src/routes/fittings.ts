@@ -115,11 +115,34 @@ export const fittingsRoutes: FastifyPluginAsync = async (fastify) => {
       });
     }
 
+    const fabricNames: Record<string, string> = {
+      'FAB-SLK-892': 'Emerald Architectural Silk Brocade',
+      'FAB-SLK-401': 'Como Silk Brocade',
+      'FAB-WOL-104': 'Savile Row Super 150s Worsted',
+      'FAB-WOL-205': 'Midnight Cashmere Coating',
+      'FAB-VEL-301': 'Giotto Cotton Silk Velvet',
+      'FAB-VEL-730': 'Venetian Crushed Velvet',
+      'FAB-LIN-112': 'Belgian Washed Linen',
+    };
+
+    const silhouetteNames: Record<string, string> = {
+      architectural_tuxedo: 'Architectural Tuxedo Dinner Jacket',
+      architectural_tuxedo_jacket: 'Architectural Tuxedo Dinner Jacket',
+      corseted_mermaid: 'Corseted Mermaid Gown',
+      corseted_mermaid_gown: 'Corseted Mermaid Gown',
+      bias_cut_slip: 'Bias-Cut Silk Slip Dress',
+      structured_cape_blazer: 'Structured Cape Blazer',
+      pleated_palazzo_suit: 'High-Waist Pleated Palazzo Suit',
+      draped_toga_column: 'Asymmetrical Draped Toga Column',
+    };
+
     return reply.status(200).send({
       id: fitting.id,
       userId: fitting.userId,
       fabricId: fitting.fabricId,
+      fabricName: fabricNames[fitting.fabricId] || 'Emerald Architectural Silk Brocade',
       silhouetteId: fitting.silhouetteId,
+      silhouetteName: silhouetteNames[fitting.silhouetteId] || 'Architectural Tuxedo Dinner Jacket',
       status: fitting.status,
       renderUrl: fitting.renderUrl,
       motionVideoUrl: fitting.motionVideoUrl,

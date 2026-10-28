@@ -229,14 +229,14 @@ describe('Screen 5: Fitting Results View Integration (/fittings/:id)', () => {
 
     expect(html).toContain('96%');
     expect(html).toContain('Tailoring Drape Match');
-    expect(html).toContain('Verified vs NFR-030 Master Tailor Benchmark');
+    expect(html).toContain('Verified vs Master Tailor Golden Benchmark');
   });
 
   it('provides presentation mode switcher between static portrait and 360 motion walk', () => {
     const html = renderToStaticMarkup(<FittingResultsViewContent fittingId={mockFittingId} />);
 
     expect(html).toContain('Static 2D Portrait Lens');
-    expect(html).toContain('360° Looping Catwalk Walk (FEAT-006)');
+    expect(html).toContain('360° Looping Catwalk Walk');
   });
 
   it('provides studio daylight and evening gala lighting toggles', () => {
