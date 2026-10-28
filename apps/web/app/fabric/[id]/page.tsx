@@ -119,14 +119,14 @@ export default function FabricDetailPage() {
 
       {/* Atelier Navigation Header */}
       <header className="sticky top-0 z-40 w-full border-b border-grey-300/60 dark:border-grey-700/60 bg-alabaster/90 dark:bg-obsidian/90 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center space-x-6">
             <BrandLogo variant="lockup" size="md" />
             <Link href="/catalog" className="inline-flex items-center space-x-2 text-xs font-sans uppercase tracking-wider text-grey-600 dark:text-grey-400 hover:text-gold transition-colors">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-              <span>Back to Catalog</span>
+              <span className="hidden sm:inline">Back to Catalog</span><span className="sm:hidden">Back</span>
             </Link>
           </div>
 
@@ -147,7 +147,7 @@ export default function FabricDetailPage() {
       </header>
 
       {/* Main Split-Screen Cinematic Detail Layout */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           {/* Left Column (60%): Interactive 3D WebGPU Viewport & Macro Photography */}
           <div className="lg:col-span-7 space-y-6">
@@ -164,7 +164,7 @@ export default function FabricDetailPage() {
                   drapeCoefficient={fabric.drapeCoefficient}
                   stiffnessRating={fabric.stiffnessRating}
                   onInspectWeave={() => setIsMicroWeaveOpen(true)}
-                  className="w-full h-full min-h-[440px]"
+                  className="w-full h-full min-h-[360px] sm:min-h-[440px]"
                 />
               </div>
 
@@ -257,7 +257,7 @@ export default function FabricDetailPage() {
                 )}
               </div>
 
-              <div className="overflow-hidden rounded-md border border-grey-300/80 dark:border-grey-700/80 bg-alabaster dark:bg-obsidian">
+              <div className="overflow-x-auto rounded-md border border-grey-300/80 dark:border-grey-700/80 bg-alabaster dark:bg-obsidian">
                 <table className="w-full text-left text-xs font-sans">
                   <thead className="bg-grey-100 dark:bg-grey-800 text-grey-600 dark:text-grey-400 uppercase text-[10px] tracking-wider border-b border-grey-300 dark:border-grey-700">
                     <tr>

@@ -176,7 +176,7 @@ export default function FabricCatalogPage() {
           </nav>
 
           {/* Header Actions */}
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <button
               type="button"
               onClick={() => setIsDrawerOpen(true)}

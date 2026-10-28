@@ -210,4 +210,28 @@ describe('WebGPU Lifecycle & Tiered Graphics Boot Check', () => {
       expect(svg).toContain('pattern');
     }
   });
+
+  it('enforces mobile viewport responsiveness invariants across screens and components', () => {
+    // 1. Verify layout.tsx exports responsive viewport
+    const layoutPath = path.resolve(__dirname, '../app/layout.tsx');
+    const layoutCode = fs.readFileSync(layoutPath, 'utf8');
+    expect(layoutCode).toContain("width: 'device-width'");
+    expect(layoutCode).toContain('initialScale: 1');
+
+    // 2. Verify BeforeAfterSlider does not enforce a rigid minWidth breaking mobile
+    const sliderPath = path.resolve(__dirname, '../components/fitting/BeforeAfterSlider.tsx');
+    const sliderCode = fs.readFileSync(sliderPath, 'utf8');
+    expect(sliderCode).not.toContain("minWidth: '600px'");
+
+    // 3. Verify ClothSandbox uses touch-none and mobile-scaled controls
+    const sandboxPath = path.resolve(__dirname, '../components/canvas/ClothSandbox.tsx');
+    const sandboxCode = fs.readFileSync(sandboxPath, 'utf8');
+    expect(sandboxCode).toContain("touchAction: 'none'");
+    expect(sandboxCode).toContain('overflow-x-auto');
+
+    // 4. Verify MicroWeaveInspector contains responsive touch controls
+    const inspectorPath = path.resolve(__dirname, '../components/canvas/MicroWeaveInspector.tsx');
+    const inspectorCode = fs.readFileSync(inspectorPath, 'utf8');
+    expect(inspectorCode).toContain("touchAction: 'none'");
+  });
 });

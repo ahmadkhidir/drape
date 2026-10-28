@@ -473,7 +473,7 @@ export function MicroWeaveInspector({
             ref={canvasRef}
             width={960}
             height={560}
-            className="w-full h-full object-contain cursor-grab active:cursor-grabbing"
+            className="w-full h-full object-contain cursor-grab active:cursor-grabbing touch-none" style={{ touchAction: 'none' }}
             data-testid="micro-weave-canvas"
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
@@ -499,12 +499,12 @@ export function MicroWeaveInspector({
           )}
 
           {/* Interactive Optical Zoom Pill (1x - 10x) */}
-          <div className="absolute bottom-6 left-6 z-20 flex items-center space-x-3 px-4 py-2 rounded-full bg-obsidian/85 backdrop-blur-md border border-grey-700/80 shadow-lg">
-            <span className="text-xs text-grey-400 font-medium">Zoom</span>
+          <div className="absolute bottom-16 sm:bottom-6 left-3 sm:left-6 z-20 flex items-center space-x-2 sm:space-x-3 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-obsidian/90 backdrop-blur-md border border-grey-700/80 shadow-lg text-xs">
+            <span className="text-[10px] sm:text-xs text-grey-400 font-medium">Zoom</span>
             <button
               type="button"
               onClick={() => handleZoomChange(zoom - 0.5)}
-              className="w-7 h-7 rounded-full bg-grey-800 text-alabaster hover:bg-gold hover:text-ink text-sm font-bold flex items-center justify-center transition-colors"
+              className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-grey-800 text-alabaster hover:bg-gold hover:text-ink text-xs sm:text-sm font-bold flex items-center justify-center transition-colors"
               aria-label="Decrease zoom"
             >
               −
@@ -516,43 +516,43 @@ export function MicroWeaveInspector({
               step="0.1"
               value={zoom}
               onChange={(e) => handleZoomChange(parseFloat(e.target.value))}
-              className="w-28 accent-gold cursor-pointer"
+              className="w-20 sm:w-28 accent-gold cursor-pointer"
               aria-label="Microscopic Optical Zoom Slider"
               data-testid="zoom-slider"
             />
             <button
               type="button"
               onClick={() => handleZoomChange(zoom + 0.5)}
-              className="w-7 h-7 rounded-full bg-grey-800 text-alabaster hover:bg-gold hover:text-ink text-sm font-bold flex items-center justify-center transition-colors"
+              className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-grey-800 text-alabaster hover:bg-gold hover:text-ink text-xs sm:text-sm font-bold flex items-center justify-center transition-colors"
               aria-label="Increase zoom"
             >
               +
             </button>
-            <span className="font-mono text-xs text-gold font-semibold w-12 text-right">
+            <span className="font-mono text-[10px] sm:text-xs text-gold font-semibold w-9 sm:w-12 text-right">
               {zoom.toFixed(1)}x
             </span>
           </div>
 
           {/* Interactive Directional Lighting Bar (0..360° & Pitch) */}
-          <div className="absolute bottom-6 right-6 z-20 flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 px-4 py-2 rounded-xl bg-obsidian/85 backdrop-blur-md border border-grey-700/80 shadow-lg text-xs">
+          <div className="absolute bottom-3 sm:bottom-6 right-3 sm:right-6 z-20 flex items-center space-x-2 sm:space-x-4 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-obsidian/90 backdrop-blur-md border border-grey-700/80 shadow-lg text-[10px] sm:text-xs">
             {/* Azimuth Rotation */}
-            <div className="flex items-center space-x-2">
-              <span className="text-grey-400">Light Angle</span>
+            <div className="flex items-center space-x-1 sm:space-x-2">
+              <span className="text-grey-400">Angle</span>
               <input
                 type="range"
                 min="0"
                 max="360"
                 value={lightState.angleDeg}
                 onChange={(e) => handleLightAngleChange(parseInt(e.target.value, 10))}
-                className="w-24 accent-gold cursor-pointer"
+                className="w-16 sm:w-24 accent-gold cursor-pointer"
                 aria-label="Light Azimuth Rotation Slider"
                 data-testid="light-angle-slider"
               />
-              <span className="font-mono text-gold w-8">{lightState.angleDeg}°</span>
+              <span className="font-mono text-gold w-7 sm:w-8 text-right">{lightState.angleDeg}°</span>
             </div>
 
             {/* Pitch Elevation */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-2">
               <span className="text-grey-400">Pitch</span>
               <input
                 type="range"
@@ -560,11 +560,11 @@ export function MicroWeaveInspector({
                 max="90"
                 value={lightState.pitchDeg}
                 onChange={(e) => handleLightPitchChange(parseInt(e.target.value, 10))}
-                className="w-20 accent-gold cursor-pointer"
+                className="w-14 sm:w-20 accent-gold cursor-pointer"
                 aria-label="Light Pitch Elevation Slider"
                 data-testid="light-pitch-slider"
               />
-              <span className="font-mono text-gold w-8">{lightState.pitchDeg}°</span>
+              <span className="font-mono text-gold w-7 sm:w-8 text-right">{lightState.pitchDeg}°</span>
             </div>
           </div>
         </div>

@@ -82,6 +82,7 @@ export default function AtelierHomePage() {
   const [activeFabric, setActiveFabric] = useState<FabricItem>(FEATURED_BOLTS[0]);
   const [isMicroWeaveOpen, setIsMicroWeaveOpen] = useState<boolean>(false);
   const [inspectingFabric, setInspectingFabric] = useState<FabricItem>(FEATURED_BOLTS[0]);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   const handleOpenMicroWeave = (fabric: FabricItem) => {
     setInspectingFabric(fabric);
@@ -92,7 +93,7 @@ export default function AtelierHomePage() {
     <div className="flex min-h-screen flex-col bg-surface dark:bg-surface-dark transition-colors duration-300">
       {/* Atelier Luxury Header / Navigation */}
       <header className="sticky top-0 z-40 w-full border-b border-grey-300/60 dark:border-grey-700/60 bg-alabaster/80 dark:bg-obsidian/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* Brand Mark & Monogram Lockup */}
           <BrandLogo variant="lockup" size="md" />
 
@@ -113,27 +114,76 @@ export default function AtelierHomePage() {
           </nav>
 
           {/* Atelier Actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <button
               type="button"
-              className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-ink dark:text-alabaster border border-grey-300 dark:border-grey-700 rounded-md hover:border-gold hover:text-gold transition-all"
+              className="hidden sm:inline-flex px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-ink dark:text-alabaster border border-grey-300 dark:border-grey-700 rounded-md hover:border-gold hover:text-gold transition-all"
               aria-label="Toggle Soundscape Audio"
             >
               Sound: Off
             </button>
             <a
               href="/catalog"
-              className="inline-flex items-center px-4 py-2 text-xs font-semibold uppercase tracking-wider text-alabaster bg-ink dark:bg-alabaster dark:text-ink rounded-md hover:bg-primary-700 dark:hover:bg-grey-200 transition-colors shadow-sm"
+              className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold uppercase tracking-wider text-alabaster bg-ink dark:bg-alabaster dark:text-ink rounded-md hover:bg-primary-700 dark:hover:bg-grey-200 transition-colors shadow-sm"
             >
               Explore Bolts
             </a>
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 rounded-md text-grey-700 dark:text-grey-300 hover:text-gold focus:outline-none"
+              aria-label="Toggle navigation menu"
+              aria-expanded={isMobileMenuOpen}
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                {isMobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Drawer */}
+        {isMobileMenuOpen && (
+          <nav className="md:hidden border-t border-grey-300/60 dark:border-grey-700/60 bg-alabaster dark:bg-obsidian px-6 py-4 space-y-3 font-sans text-sm">
+            <Link
+              href="/catalog"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-grey-700 dark:text-grey-300 hover:text-gold py-1"
+            >
+              Fabric Catalog
+            </Link>
+            <a
+              href="#neural-atelier"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-grey-700 dark:text-grey-300 hover:text-gold py-1"
+            >
+              Neural Atelier
+            </a>
+            <a
+              href="#provenance"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-grey-700 dark:text-grey-300 hover:text-gold py-1"
+            >
+              Provenance
+            </a>
+            <Link
+              href="/catalog"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-grey-700 dark:text-grey-300 hover:text-gold py-1"
+            >
+              Digital Wardrobe
+            </Link>
+          </nav>
+        )}
       </header>
 
       {/* Main Editorial Hero Section */}
       <main className="flex-1">
-        <section className="relative px-6 pt-12 pb-20 lg:px-8 max-w-7xl mx-auto">
+        <section className="relative px-4 sm:px-6 pt-8 sm:pt-12 pb-16 sm:pb-20 lg:px-8 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Left Editorial Text Column */}
             <div className="lg:col-span-5 flex flex-col justify-center space-y-6">
@@ -170,7 +220,7 @@ export default function AtelierHomePage() {
               </div>
 
               {/* Provenance Micro-Trust Signals */}
-              <div className="pt-6 border-t border-grey-300/50 dark:border-grey-700/50 grid grid-cols-3 gap-4 text-xs text-grey-600 dark:text-grey-400 font-sans">
+              <div className="pt-6 border-t border-grey-300/50 dark:border-grey-700/50 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-xs text-grey-600 dark:text-grey-400 font-sans">
                 <div>
                   <span className="block font-semibold text-ink dark:text-alabaster">100% Provenance</span>
                   <span>Direct European Mills</span>
@@ -199,7 +249,7 @@ export default function AtelierHomePage() {
                   drapeCoefficient={activeFabric.drapeCoefficient}
                   stiffnessRating={activeFabric.stiffnessRating}
                   onInspectWeave={() => handleOpenMicroWeave(activeFabric)}
-                  className="h-[520px] shadow-lg"
+                  className="h-[380px] sm:h-[520px] shadow-lg"
                 />
               </div>
             </div>

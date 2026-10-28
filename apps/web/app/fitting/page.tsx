@@ -245,15 +245,16 @@ function NeuralFittingContent() {
     <div className="flex min-h-screen flex-col bg-surface dark:bg-surface-dark transition-colors duration-300">
       {/* Atelier Top Navigation Bar */}
       <header className="sticky top-0 z-40 w-full border-b border-grey-300/60 dark:border-grey-700/60 bg-alabaster/90 dark:bg-obsidian/90 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center space-x-4">
             <BrandLogo variant="lockup" size="sm" />
             <span className="text-grey-300 dark:text-grey-700">|</span>
-            <div className="flex items-center space-x-2 text-xs font-mono">
+            <div className="flex items-center space-x-1.5 sm:space-x-2 text-xs font-mono">
               <span className="text-gold font-bold">Step 1:</span>
-              <span className="text-ink dark:text-alabaster">Your Silhouette</span>
-              <span className="text-grey-400">→</span>
-              <span className="text-grey-500">Step 2: Fitting</span>
+              <span className="text-ink dark:text-alabaster hidden sm:inline">Your Silhouette</span>
+              <span className="text-ink dark:text-alabaster sm:hidden">Silhouette</span>
+              <span className="text-grey-400 hidden sm:inline">→</span>
+              <span className="text-grey-500 hidden sm:inline">Step 2: Fitting</span>
             </div>
           </div>
 
@@ -269,7 +270,7 @@ function NeuralFittingContent() {
       </header>
 
       {/* Main Studio Viewport */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 lg:px-8 space-y-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 lg:px-8 space-y-8">
         {/* Title Header */}
         <div className="border-b border-grey-300/60 dark:border-grey-700/60 pb-6">
           <div className="inline-flex items-center space-x-2 text-xs font-semibold uppercase tracking-widest text-gold font-sans mb-1">

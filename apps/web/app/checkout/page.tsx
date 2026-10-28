@@ -215,7 +215,7 @@ export default function CheckoutPage() {
                 Private Salon • Atelier Checkout • Certified Vault Security
               </span>
             </div>
-            <h1 className="text-3xl font-display text-primary-900 font-normal">
+            <h1 className="text-2xl sm:text-3xl font-display text-primary-900 font-normal">
               Continuous Cut Yardage & Atelier Checkout
             </h1>
           </div>
@@ -580,7 +580,7 @@ export default function CheckoutPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between text-[11px] text-grey-500 pt-1">
+                    <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] text-grey-500 pt-1">
                       <span>Warehouse Bolt: {item.boltId}</span>
                       <span>Cedar Crate Packaging: Included</span>
                     </div>

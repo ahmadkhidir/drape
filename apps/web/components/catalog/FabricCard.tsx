@@ -56,7 +56,7 @@ export const FabricCard: React.FC<FabricCardProps> = ({ fabric, onAddSwatch }) =
           </div>
 
           {/* Top Badges: GSM Pill & Continuous Bolt Status */}
-          <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 pointer-events-none">
+          <div className="absolute top-3 left-3 right-3 flex flex-wrap items-center justify-between gap-1.5 pointer-events-none">
             {/* Certified GSM Pill */}
             <span
               className="inline-flex items-center px-2.5 py-1 rounded-sm text-[11px] font-mono font-semibold tracking-wider bg-alabaster/90 dark:bg-obsidian/90 text-ink dark:text-alabaster backdrop-blur-md shadow-sm border border-grey-300/50 dark:border-grey-700/50"

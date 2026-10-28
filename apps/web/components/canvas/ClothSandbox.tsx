@@ -559,9 +559,10 @@ export function ClothSandbox({
       {tier !== 'fallback-media' && (
         <canvas
           ref={canvasRef}
-          className={`w-full h-full cursor-grab active:cursor-grabbing transition-opacity duration-500 ${
+          className={`w-full h-full cursor-grab active:cursor-grabbing touch-none transition-opacity duration-500 ${
             status === 'ready' ? 'opacity-100' : 'opacity-40'
           }`}
+          style={{ touchAction: 'none' }}
           data-testid="cloth-canvas"
           aria-label={`Interactive 3D cloth simulation canvas for ${fabricName}. Drag to wave, ripple, or fold.`}
           onPointerDown={handlePointerDown}
@@ -613,13 +614,13 @@ export function ClothSandbox({
 
       {/* Top Left View Mode Switcher {LIVE, MACROWEAVE, INSPECT} */}
       <div
-        className="absolute top-4 left-4 z-20 flex items-center space-x-1 p-1 rounded-md bg-obsidian/85 backdrop-blur-md border border-grey-700/80 shadow-md"
+        className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 z-20 flex items-center space-x-1 p-1 rounded-md bg-obsidian/85 backdrop-blur-md border border-grey-700/80 shadow-md max-w-[calc(100%-20px)] overflow-x-auto"
         data-testid="viewmode-switcher"
       >
         <button
           type="button"
           onClick={() => setViewMode('live')}
-          className={`flex items-center px-3 py-1 rounded text-[11px] font-sans uppercase tracking-wider font-semibold transition-all ${
+          className={`flex items-center px-2.5 py-1 sm:px-3 sm:py-1 rounded text-[10px] sm:text-[11px] font-sans uppercase tracking-wider font-semibold transition-all shrink-0 ${
             viewMode === 'live'
               ? 'bg-gold text-obsidian shadow-sm'
               : 'text-alabaster hover:text-gold'
@@ -627,7 +628,7 @@ export function ClothSandbox({
           data-testid="tab-3d"
         >
           <span
-            className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+            className={`w-1.5 h-1.5 rounded-full mr-1 sm:mr-1.5 ${
               viewMode === 'live' ? 'bg-emerald-400 animate-pulse' : 'bg-emerald-400/50'
             }`}
           />
@@ -637,7 +638,7 @@ export function ClothSandbox({
         <button
           type="button"
           onClick={() => setViewMode('macroweave')}
-          className={`px-3 py-1 rounded text-[11px] font-sans uppercase tracking-wider font-semibold transition-all ${
+          className={`px-2.5 py-1 sm:px-3 sm:py-1 rounded text-[10px] sm:text-[11px] font-sans uppercase tracking-wider font-semibold transition-all shrink-0 ${
             viewMode === 'macroweave'
               ? 'bg-gold text-obsidian shadow-sm'
               : 'text-alabaster hover:text-gold'
@@ -650,7 +651,7 @@ export function ClothSandbox({
         <button
           type="button"
           onClick={handleInspectClick}
-          className="flex items-center px-3 py-1 rounded text-[11px] font-sans uppercase tracking-wider font-semibold text-alabaster hover:text-gold transition-all"
+          className="flex items-center px-2.5 py-1 sm:px-3 sm:py-1 rounded text-[10px] sm:text-[11px] font-sans uppercase tracking-wider font-semibold text-alabaster hover:text-gold transition-all shrink-0"
           data-testid="tab-inspect"
         >
           <svg
@@ -671,7 +672,7 @@ export function ClothSandbox({
 
         {status === 'context-lost' && (
           <span
-            className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-semantic-error-900 text-alabaster border border-semantic-error-500 ml-1"
+            className="inline-flex items-center px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-medium bg-semantic-error-900 text-alabaster border border-semantic-error-500 ml-1 shrink-0"
             data-testid="context-lost-badge"
           >
             Context Lost
@@ -706,13 +707,13 @@ export function ClothSandbox({
 
       {/* Bottom Center Gravity Mode Presets (FEAT-002 & Screen 3) */}
       {viewMode === 'live' && (
-        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex items-center space-x-1 p-1 rounded-full bg-ink/80 dark:bg-obsidian/80 backdrop-blur-md border border-grey-300/30 dark:border-grey-700/50 shadow-md">
+        <div className="absolute bottom-14 sm:bottom-16 left-1/2 -translate-x-1/2 z-10 flex items-center space-x-1 p-0.5 sm:p-1 rounded-full bg-ink/80 dark:bg-obsidian/80 backdrop-blur-md border border-grey-300/30 dark:border-grey-700/50 shadow-md">
         {(['breeze', 'drape'] as GravityPreset[]).map((preset) => (
           <button
             key={preset}
             type="button"
             onClick={() => handleGravityPresetChange(preset)}
-            className={`px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider transition-all focus:outline-none focus:ring-1 focus:ring-gold ${
+            className={`px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium uppercase tracking-wider transition-all focus:outline-none focus:ring-1 focus:ring-gold ${
               gravityPreset === preset
                 ? 'bg-gold text-ink font-semibold shadow-sm'
                 : 'text-alabaster hover:text-gold'
@@ -741,14 +742,14 @@ export function ClothSandbox({
       )}
 
       {/* Bottom Physical Provenance Bar */}
-      <div className="absolute bottom-2 left-4 right-4 z-10 flex items-center justify-between p-2.5 rounded-md bg-alabaster/90 dark:bg-obsidian/90 backdrop-blur-md border border-grey-300 dark:border-grey-700 text-xs">
-        <div>
-          <span className="font-semibold text-ink dark:text-alabaster block">{fabricName}</span>
+      <div className="absolute bottom-2 left-2 right-2 sm:left-4 sm:right-4 z-10 flex flex-col sm:flex-row sm:items-center justify-between p-2 sm:p-2.5 rounded-md bg-alabaster/90 dark:bg-obsidian/90 backdrop-blur-md border border-grey-300 dark:border-grey-700 text-[10px] sm:text-xs gap-1 sm:gap-2">
+        <div className="truncate">
+          <span className="font-semibold text-ink dark:text-alabaster inline sm:block mr-2 sm:mr-0">{fabricName}</span>
           <span className="text-grey-600 dark:text-grey-400">
             {composition} · {gsm} GSM · Drape: {drapeCoefficient} · Stiffness: {stiffnessRating}
           </span>
         </div>
-        <span className="text-gold font-medium uppercase tracking-wider text-[10px]">
+        <span className="text-gold font-medium uppercase tracking-wider text-[9px] sm:text-[10px] shrink-0 self-end sm:self-auto">
           Verlet Physical Model
         </span>
       </div>
