@@ -199,6 +199,65 @@ export interface AMQPMessageDispatcher {
   publish(routingKey: string, message: AmqpMotionGeneratePayload): Promise<boolean>;
 }
 
+export class RabbitMQDispatcher implements AMQPMessageDispatcher {
+  private connection: any = null;
+  private channel: any = null;
+  private amqpUrl: string;
+
+  constructor(amqpUrl: string = process.env.AMQP_URL || 'amqp://drape:drape@localhost:5672') {
+    this.amqpUrl = amqpUrl;
+  }
+
+  public async connect(): Promise<boolean> {
+    try {
+      const amqplib = await import('amqplib');
+      const connectFn = (amqplib as any).default?.connect || amqplib.connect;
+      this.connection = await connectFn(this.amqpUrl);
+      this.channel = await this.connection.createChannel();
+      await this.channel.assertQueue('neural.motion.generate', { durable: true });
+      await this.channel.assertQueue('neural.motion.completed', { durable: true });
+
+      this.channel.consume('neural.motion.completed', async (msg: any) => {
+        if (msg) {
+          try {
+            const data = JSON.parse(msg.content.toString());
+            await motionService.handleMotionCompleted(data);
+            this.channel?.ack(msg);
+          } catch {
+            this.channel?.nack(msg, false, false);
+          }
+        }
+      });
+
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  public async publish(routingKey: string, message: AmqpMotionGeneratePayload): Promise<boolean> {
+    if (!this.channel) {
+      const connected = await this.connect();
+      if (!connected || !this.channel) return false;
+    }
+
+    return this.channel.sendToQueue(routingKey, Buffer.from(JSON.stringify(message)), {
+      persistent: true,
+    });
+  }
+
+  public async close(): Promise<void> {
+    try {
+      await this.channel?.close();
+      await this.connection?.close();
+    } catch {
+      // ignore
+    }
+    this.channel = null;
+    this.connection = null;
+  }
+}
+
 export class MotionVideoService {
   private fittings: Map<string, FittingRecord> = new Map();
   private jobs: Map<string, MotionJob> = new Map(); // key: motionJobId

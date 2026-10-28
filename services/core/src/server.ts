@@ -7,7 +7,12 @@ import { fileURLToPath } from 'node:url';
 import fastify, { type FastifyInstance, type FastifyServerOptions } from 'fastify';
 import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
+import fastifyStatic from '@fastify/static';
+import fs from 'node:fs';
+import path from 'node:path';
 import type { Redis } from 'ioredis';
+import { RabbitMQDispatcher, motionService } from './services/motion.service.js';
+import { ensureMediaDirectories } from './utils/media-generator.js';
 import { healthRoutes } from './routes/health.js';
 import { fabricRoutes } from './routes/fabrics.js';
 import { authRoutes } from './routes/auth.js';
@@ -52,6 +57,32 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
       files: 2,
     },
   });
+
+  // Static media asset serving (renders, videos, sprites)
+  const mediaDir = process.env.MEDIA_DIR
+    ? path.resolve(process.env.MEDIA_DIR)
+    : path.resolve(process.cwd(), '../../apps/web/public/media');
+
+  ensureMediaDirectories(mediaDir);
+
+  await server.register(fastifyStatic, {
+    root: mediaDir,
+    prefix: '/media/',
+    decorateReply: false,
+  });
+
+  // Connect RabbitMQ AMQP dispatcher if AMQP_URL is configured
+  if (process.env.AMQP_URL && process.env.NODE_ENV !== 'test') {
+    const rmq = new RabbitMQDispatcher(process.env.AMQP_URL);
+    rmq.connect().then((connected) => {
+      if (connected) {
+        motionService.setCustomDispatcher(rmq);
+        server.log.info('RabbitMQ AMQP dispatcher connected successfully to neural.motion.generate');
+      }
+    }).catch(() => {
+      server.log.warn('Could not establish initial RabbitMQ connection, using in-memory dispatcher');
+    });
+  }
 
   // Register baseline health and operational routes
   await server.register(healthRoutes, {
