@@ -1,6 +1,6 @@
 /**
  * Drape Core Fastify Server Factory
- * Spec Anchor: architecture.md, AGENTS.md, C-001..C-029
+ * Spec Anchor: architecture.md, AGENTS.md, C-001..C-038
  */
 
 import { fileURLToPath } from 'node:url';
@@ -16,6 +16,7 @@ import { yardageRoutes } from './routes/yardage.js';
 import { tailorRoutes } from './routes/tailors.js';
 import { wardrobeRoutes } from './routes/wardrobe.js';
 import { specRoutes } from './routes/specs.js';
+import { motionRoutes } from './routes/motion.js';
 
 export interface BuildServerOptions {
   fastifyOptions?: FastifyServerOptions;
@@ -72,6 +73,9 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
 
   // Register tailor specification and dossier export routes (C-017, C-018)
   await server.register(specRoutes);
+
+  // Register 360-degree neural motion video routes (C-014, C-015)
+  await server.register(motionRoutes);
 
   return server;
 }
