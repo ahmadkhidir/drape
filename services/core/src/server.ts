@@ -17,6 +17,7 @@ import { tailorRoutes } from './routes/tailors.js';
 import { wardrobeRoutes } from './routes/wardrobe.js';
 import { specRoutes } from './routes/specs.js';
 import { motionRoutes } from './routes/motion.js';
+import { fittingsRoutes } from './routes/fittings.js';
 
 export interface BuildServerOptions {
   fastifyOptions?: FastifyServerOptions;
@@ -76,6 +77,9 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
 
   // Register 360-degree neural motion video routes (C-014, C-015)
   await server.register(motionRoutes);
+
+  // Register neural fitting routes (C-011, C-012)
+  await server.register(fittingsRoutes);
 
   return server;
 }

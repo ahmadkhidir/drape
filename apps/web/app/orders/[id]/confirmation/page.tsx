@@ -291,7 +291,7 @@ export default function OrderConfirmationPage() {
                 <h2 className="text-xs font-semibold uppercase tracking-wider text-primary-900 font-mono">
                   Technical Tailor Dossier (Vector PDF)
                 </h2>
-                <span className="text-xs font-mono text-accent-700 font-semibold">C-017 Ready</span>
+                <span className="text-xs font-mono text-accent-700 font-semibold">Ready to Download</span>
               </div>
 
               <p className="text-xs text-grey-600 leading-relaxed">

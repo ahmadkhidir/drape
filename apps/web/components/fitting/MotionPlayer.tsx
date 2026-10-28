@@ -439,7 +439,7 @@ export function MotionPlayer({
         <div className="flex items-center space-x-2">
           <span className="h-2 w-2 rounded-full bg-gold animate-pulse" />
           <span id={titleId} className="font-mono text-xs uppercase tracking-widest text-gold font-bold">
-            360° Catwalk Motion • FEAT-006
+            360° Catwalk Motion • Neural Runway
           </span>
         </div>
 
@@ -631,7 +631,7 @@ export function MotionPlayer({
 
               <div className="flex items-center justify-between text-[10px] font-mono text-grey-400">
                 <span>Est. Wait: ~{estimatedWaitSeconds}s</span>
-                <span>FEAT-006 • 30 FPS Loop</span>
+                <span>Seamless 30 FPS Loop</span>
               </div>
             </div>
           </div>

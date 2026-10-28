@@ -275,7 +275,7 @@ function NeuralFittingContent() {
         <div className="border-b border-grey-300/60 dark:border-grey-700/60 pb-6">
           <div className="inline-flex items-center space-x-2 text-xs font-semibold uppercase tracking-widest text-gold font-sans mb-1">
             <span className="h-px w-6 bg-gold" />
-            <span>Screen 04 • Generative Neural Tailoring</span>
+            <span>Couture Atelier • Generative Neural Tailoring</span>
           </div>
           <h1 className="font-display text-3xl sm:text-4xl font-semibold text-ink dark:text-alabaster tracking-tight">
             Neural Garment Fitting
@@ -635,7 +635,7 @@ function NeuralFittingContent() {
                 className="w-full rounded-md border border-grey-300 dark:border-grey-700 bg-alabaster dark:bg-obsidian p-3 text-xs font-sans text-ink dark:text-alabaster placeholder-grey-400 focus:outline-none focus:border-gold"
               />
               <div className="flex justify-between text-[11px] text-grey-500 font-mono">
-                <span>Natural Language Tailoring Parser (FEAT-004)</span>
+                <span>Natural Language Tailoring Directives</span>
                 <span>{customPrompt.length}/500</span>
               </div>
             </div>
@@ -657,7 +657,7 @@ function NeuralFittingContent() {
                   GPU Latency Budget
                 </span>
                 <p className="font-mono text-xs text-ink dark:text-alabaster font-semibold">
-                  Estimated Inference: &lt; 4.0s (NFR-004)
+                  Estimated Inference: &lt; 4.0s
                 </p>
               </div>
 

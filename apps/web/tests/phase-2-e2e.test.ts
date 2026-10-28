@@ -308,7 +308,7 @@ describe('Phase 2 Full E2E & Contract Verification Suite', () => {
         })
       );
 
-      expect(htmlReady).toContain('360° Catwalk Motion • FEAT-006');
+      expect(htmlReady).toContain('360° Catwalk Motion • Neural Runway');
       expect(htmlReady).toContain('360-degree Motion Catwalk Video Player');
 
       // Empty / Fallback state when videoUrl is null
@@ -330,7 +330,7 @@ describe('Phase 2 Full E2E & Contract Verification Suite', () => {
         })
       );
 
-      expect(html).toContain('Screen 05 • Fitting Results View');
+      expect(html).toContain('Haute Couture Fitting Showcase');
       expect(html).toContain('Corseted Mermaid Gown');
       expect(html).toContain('Como Silk Brocade');
       expect(html).toContain('96%');

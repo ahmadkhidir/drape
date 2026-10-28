@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ClothSandbox } from '../components/canvas/ClothSandbox';
 import { MicroWeaveInspector } from '../components/canvas/MicroWeaveInspector';
 import { BrandLogo } from '../components/brand/BrandLogo';
+import { SoundscapeToggle } from '../components/audio/SoundscapeToggle';
 
 interface FabricItem {
   id: string;
@@ -115,13 +116,7 @@ export default function AtelierHomePage() {
 
           {/* Atelier Actions */}
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <button
-              type="button"
-              className="hidden sm:inline-flex px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-ink dark:text-alabaster border border-grey-300 dark:border-grey-700 rounded-md hover:border-gold hover:text-gold transition-all"
-              aria-label="Toggle Soundscape Audio"
-            >
-              Sound: Off
-            </button>
+            <SoundscapeToggle className="hidden sm:inline-flex" />
             <a
               href="/catalog"
               className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold uppercase tracking-wider text-alabaster bg-ink dark:bg-alabaster dark:text-ink rounded-md hover:bg-primary-700 dark:hover:bg-grey-200 transition-colors shadow-sm"
