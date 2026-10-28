@@ -13,6 +13,7 @@ import { fetchCatalog } from '../../lib/catalog-data';
 import { FabricGrid } from '../../components/catalog/FabricGrid';
 import { FilterSidebar } from '../../components/catalog/FilterSidebar';
 import { FilterDrawer } from '../../components/catalog/FilterDrawer';
+import { BrandLogo } from '../../components/brand/BrandLogo';
 
 const INITIAL_FILTERS: CatalogFilterState = {
   searchQuery: '',
@@ -161,12 +162,7 @@ export default function FabricCatalogPage() {
       <header className="sticky top-0 z-40 w-full border-b border-grey-300/60 dark:border-grey-700/60 bg-alabaster/90 dark:bg-obsidian/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
           {/* Brand Monogram */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            <img src="/brand/monogram-gold.svg" alt="Drape Atelier Monogram" className="h-8 w-8 object-contain" />
-            <span className="font-display text-xl tracking-widest text-ink dark:text-alabaster uppercase font-semibold">
-              DRAPE
-            </span>
-          </Link>
+          <BrandLogo variant="lockup" size="md" />
 
           {/* Quick Breadcrumbs */}
           <nav className="hidden md:flex items-center space-x-2 text-xs font-sans uppercase tracking-wider text-grey-500">

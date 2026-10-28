@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { OrderDetails } from '../../../../lib/checkoutTypes';
 import { getOrderDetails } from '../../../../lib/checkoutApi';
 import { formatFractionalYards } from '../../../../components/checkout/YardageCalculatorWidget';
+import { BrandLogo } from '../../../../components/brand/BrandLogo';
 
 export default function OrderConfirmationPage() {
   const params = useParams();
