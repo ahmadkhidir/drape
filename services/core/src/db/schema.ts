@@ -124,33 +124,7 @@ export const orderItems = pgTable('order_items', {
 });
 
 /**
- * TailorStudio Entity
- * Accredited master tailor studio partner in the Drape concierge network.
- * Spec Anchor: docs/Drape/schema.md#TailorStudio, FEAT-010, C-025
+ * TailorStudio & TailorDispatch Entities
+ * Spec Anchor: docs/Drape/schema.md#TailorStudio, docs/Drape/schema.md#TailorDispatch, FEAT-010, C-025, C-026, C-027
  */
-export const tailorStudios = pgTable('tailor_studios', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  studioName: varchar('studio_name', { length: 100 }).notNull(),
-  masterCutter: varchar('master_cutter', { length: 100 }).notNull(),
-  city: varchar('city', { length: 50 }).notNull(),
-  address: text('address').notNull(),
-  rating: numeric('rating', { precision: 3, scale: 2 }).notNull(),
-  activeCapacity: boolean('active_capacity').notNull().default(true),
-  contactEmail: varchar('contact_email', { length: 255 }).notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-});
-
-/**
- * TailorDispatch Entity
- * Concierge dispatch connecting an Order with an accredited TailorStudio.
- * Spec Anchor: docs/Drape/schema.md#TailorDispatch, C-022, C-023
- */
-export const tailorDispatches = pgTable('tailor_dispatches', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  orderId: uuid('order_id').notNull().references(() => orders.id, { onDelete: 'cascade' }),
-  tailorStudioId: uuid('tailor_studio_id').notNull().references(() => tailorStudios.id),
-  status: varchar('status', { length: 50 }).notNull().default('dispatched'), // 'dispatched' | 'received_at_atelier' | 'fitting_scheduled' | 'in_construction' | 'completed'
-  digitalSpecUrl: text('digital_spec_url').notNull(),
-  carrierTrackingNumber: varchar('carrier_tracking_number', { length: 100 }),
-  dispatchedAt: timestamp('dispatched_at', { withTimezone: true }).defaultNow().notNull(),
-});
+export * from './schema/tailors.js';

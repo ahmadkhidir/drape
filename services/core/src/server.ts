@@ -1,6 +1,6 @@
 /**
  * Drape Core Fastify Server Factory
- * Spec Anchor: architecture.md, AGENTS.md, C-001..C-024
+ * Spec Anchor: architecture.md, AGENTS.md, C-001..C-027
  */
 
 import { fileURLToPath } from 'node:url';
@@ -13,6 +13,7 @@ import { authRoutes } from './routes/auth.js';
 import { consentRoutes } from './routes/consents.js';
 import { checkoutRoutes } from './routes/checkout.js';
 import { yardageRoutes } from './routes/yardage.js';
+import { tailorRoutes } from './routes/tailors.js';
 
 export interface BuildServerOptions {
   fastifyOptions?: FastifyServerOptions;
@@ -60,6 +61,9 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
 
   // Register algorithmic yardage calculation and pattern layout routes (C-016)
   await server.register(yardageRoutes);
+
+  // Register master tailor directory and concierge routing routes (C-025..C-027)
+  await server.register(tailorRoutes);
 
   return server;
 }
