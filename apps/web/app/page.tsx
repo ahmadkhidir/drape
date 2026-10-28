@@ -99,18 +99,18 @@ export default function AtelierHomePage() {
 
           {/* Editorial Navigation */}
           <nav className="hidden md:flex items-center space-x-8 text-sm font-medium tracking-wide text-grey-700 dark:text-grey-300">
-            <a href="/catalog" className="hover:text-gold transition-colors">
+            <Link href="/catalog" className="hover:text-gold transition-colors">
               Fabric Catalog
-            </a>
-            <a href="#neural-atelier" className="hover:text-gold transition-colors">
-              Neural Atelier
-            </a>
-            <a href="#provenance" className="hover:text-gold transition-colors">
-              Provenance
-            </a>
-            <a href="#wardrobe" className="hover:text-gold transition-colors">
+            </Link>
+            <Link href="/tailors" className="hover:text-gold transition-colors">
+              Master Tailors
+            </Link>
+            <Link href="/wardrobe" className="hover:text-gold transition-colors">
               Digital Wardrobe
-            </a>
+            </Link>
+            <Link href="/fittings/new" className="hover:text-gold transition-colors">
+              Neural Atelier
+            </Link>
           </nav>
 
           {/* Atelier Actions */}
@@ -156,26 +156,26 @@ export default function AtelierHomePage() {
             >
               Fabric Catalog
             </Link>
-            <a
-              href="#neural-atelier"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-grey-700 dark:text-grey-300 hover:text-gold py-1"
-            >
-              Neural Atelier
-            </a>
-            <a
-              href="#provenance"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-grey-700 dark:text-grey-300 hover:text-gold py-1"
-            >
-              Provenance
-            </a>
             <Link
-              href="/catalog"
+              href="/tailors"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-grey-700 dark:text-grey-300 hover:text-gold py-1"
+            >
+              Master Tailors
+            </Link>
+            <Link
+              href="/wardrobe"
               onClick={() => setIsMobileMenuOpen(false)}
               className="block text-grey-700 dark:text-grey-300 hover:text-gold py-1"
             >
               Digital Wardrobe
+            </Link>
+            <Link
+              href="/fittings/new"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-grey-700 dark:text-grey-300 hover:text-gold py-1"
+            >
+              Neural Atelier
             </Link>
           </nav>
         )}
@@ -204,19 +204,18 @@ export default function AtelierHomePage() {
 
               {/* Action Hierarchy */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4">
-                <a
+                <Link
                   href="/catalog"
                   className="inline-flex justify-center items-center px-8 py-3.5 rounded-md text-sm font-semibold tracking-wide text-alabaster bg-ink hover:bg-primary-700 dark:bg-alabaster dark:text-ink dark:hover:bg-grey-200 shadow-md transition-all duration-200"
                 >
                   Explore Catalog
-                </a>
-                <button
-                  type="button"
-                  onClick={() => handleOpenMicroWeave(activeFabric)}
+                </Link>
+                <Link
+                  href="/fittings/new"
                   className="inline-flex justify-center items-center px-8 py-3.5 rounded-md text-sm font-semibold tracking-wide text-ink dark:text-alabaster border border-grey-300 dark:border-grey-700 hover:border-gold hover:text-gold transition-all duration-200"
                 >
-                  Inspect Weave (10x Optical)
-                </button>
+                  Try On in Neural Atelier
+                </Link>
               </div>
 
               {/* Provenance Micro-Trust Signals */}
@@ -323,7 +322,7 @@ export default function AtelierHomePage() {
                   {/* Corner Swatch Actions */}
                   <div className="absolute bottom-2.5 right-2.5 flex items-center space-x-2">
                     <Link
-                      href={`/fabric/${fabric.sku}`}
+                      href={`/fabrics/${fabric.id}`}
                       onClick={(e) => e.stopPropagation()}
                       className="px-2.5 py-1 rounded bg-obsidian/80 hover:bg-ink text-alabaster hover:text-gold text-[10px] uppercase font-semibold tracking-wider transition-colors shadow-sm border border-grey-700 hover:border-gold"
                       aria-label={`View atelier dossier for ${fabric.name}`}

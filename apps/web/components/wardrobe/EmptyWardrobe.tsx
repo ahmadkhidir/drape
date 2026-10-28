@@ -125,7 +125,7 @@ export function EmptyWardrobe({ onExploreTextiles }: EmptyWardrobeProps) {
         </Link>
 
         <Link
-          href="/fitting"
+          href="/fittings/new"
           className="inline-flex items-center justify-center px-6 py-3.5 bg-white text-stone-800 text-xs font-semibold tracking-widest uppercase rounded-md border border-stone-300 hover:border-stone-400 hover:bg-stone-50 transition-colors duration-200"
         >
           Simulate 3D Fitting

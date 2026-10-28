@@ -36,7 +36,7 @@ export const FabricCard: React.FC<FabricCardProps> = ({ fabric, onAddSwatch }) =
       onMouseLeave={() => setIsHovered(false)}
       data-testid={`fabric-card-${fabric.id}`}
     >
-      <Link href={`/fabric/${fabric.id}`} className="block focus:outline-none focus:ring-2 focus:ring-gold/50 rounded-t-md">
+      <Link href={`/fabrics/${fabric.id}`} className="block focus:outline-none focus:ring-2 focus:ring-gold/50 rounded-t-md">
         {/* Tactile Macro Photography Viewport */}
         <div className="relative aspect-[4/3] w-full overflow-hidden bg-grey-200 dark:bg-grey-800">
           {/* Fallback procedural luxury textile pattern if image url is local asset */}

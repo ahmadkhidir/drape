@@ -18,7 +18,7 @@ import {
   recordTelemetryEvent,
   FALLBACK_SAVED_FITTINGS,
   FALLBACK_ORDERS,
-} from '../../components/wardrobe';
+} from '@/components/wardrobe';
 
 /**
  * Screen 9: Digital Wardrobe
@@ -109,7 +109,7 @@ export default function DigitalWardrobePage() {
             </Link>
 
             <Link
-              href="/fitting"
+              href="/fittings/new"
               data-testid="hero-commission-fitting-btn"
               className="inline-flex items-center justify-center py-2 px-3.5 bg-stone-900 hover:bg-stone-800 text-stone-50 text-xs font-medium rounded-md shadow-sm transition-colors"
             >

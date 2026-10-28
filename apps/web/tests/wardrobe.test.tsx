@@ -33,10 +33,10 @@ import {
   FALLBACK_SAVED_FITTINGS,
   FALLBACK_ORDERS,
   FALLBACK_PUBLIC_SPEC,
-} from '../src/components/wardrobe';
+} from '../components/wardrobe';
 
-import DigitalWardrobePage from '../src/app/wardrobe/page';
-import PublicSpecDossierPage from '../src/app/specs/[token]/page';
+import DigitalWardrobePage from '../app/wardrobe/page';
+import PublicSpecDossierPage from '../app/specs/[token]/page';
 
 describe('FEAT-009: Digital Wardrobe & Tailor Handoff Spec UI', () => {
   beforeEach(() => {
@@ -125,7 +125,7 @@ describe('FEAT-009: Digital Wardrobe & Tailor Handoff Spec UI', () => {
       const html = renderToStaticMarkup(<FittingCard fitting={mockFitting} />);
 
       // Inspect 3D Drape link
-      expect(html).toContain(`href="/fitting/results/${mockFitting.id}"`);
+      expect(html).toContain(`href="/fittings/${mockFitting.id}"`);
       expect(html).toContain(`data-testid="inspect-drape-${mockFitting.id}"`);
       expect(html).toContain('Inspect 3D Drape');
 

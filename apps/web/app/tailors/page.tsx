@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { BrandLogo } from '../../components/brand/BrandLogo';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import {
   TailorCity,
   TailorSpecialty,
@@ -16,7 +16,7 @@ import {
   NominateTailorModal,
   fetchTailors,
   formatCityName,
-} from '../../components/tailors';
+} from '@/components/tailors';
 
 /**
  * Loading Skeleton Grid for Master Tailor Directory

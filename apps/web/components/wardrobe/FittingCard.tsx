@@ -158,7 +158,7 @@ export function FittingCard({
           <div className="grid grid-cols-2 gap-2">
             {/* Inspect 3D Drape */}
             <Link
-              href={`/fitting/results/${fitting.id}`}
+              href={`/fittings/${fitting.id}`}
               data-testid={`inspect-drape-${fitting.id}`}
               className="inline-flex items-center justify-center py-2 px-3 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-medium rounded transition-colors text-center"
             >

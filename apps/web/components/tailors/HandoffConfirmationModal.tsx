@@ -143,7 +143,7 @@ export function HandoffConfirmationModal({
                 ✦ White-Glove Archival Logistics
               </p>
               Your cut yardage will be dispatched directly to this atelier in archival cedar packaging.
-              The tailor's studio portal will immediately receive your digital pattern dossier, grainline marker
+              The tailor&apos;s studio portal will immediately receive your digital pattern dossier, grainline marker
               diagram, and 3D neural drape render.
             </div>
 

@@ -23,7 +23,7 @@ import {
   createPinkNoiseBuffer,
   createBrownianNoiseBuffer,
   useSoundscape,
-} from '../src/lib/audio';
+} from '../lib/audio';
 
 // ── Web Audio API Mocks for Node Test Environment ──
 

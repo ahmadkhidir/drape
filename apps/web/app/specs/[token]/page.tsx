@@ -10,7 +10,7 @@ import {
   triggerTailorPdfDownload,
   recordTelemetryEvent,
   FALLBACK_PUBLIC_SPEC,
-} from '../../../components/wardrobe';
+} from '@/components/wardrobe';
 
 /**
  * Screen: Public Master Tailor Technical Specification Dossier

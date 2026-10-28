@@ -8,8 +8,8 @@ import {
   calculateSeekTimeFromFraction,
   createEvt008Payload,
   type MotionTelemetryEvent,
-} from '../src/components/fitting/MotionPlayer';
-import { FittingResultsViewContent } from '../src/app/fittings/[id]/page';
+} from '../components/fitting/MotionPlayer';
+import { FittingResultsViewContent } from '../components/fitting/FittingResultsViewContent';
 
 // Mock Next.js navigation hooks for test environment
 vi.mock('next/navigation', () => ({

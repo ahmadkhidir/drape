@@ -196,7 +196,7 @@ export default function CheckoutPage() {
       const { order } = await createOrder(orderReq);
 
       // Transition to Order Confirmation screen (Screen 07)
-      router.push(`/order/${order.id}/confirmation`);
+      router.push(`/orders/${order.id}/confirmation`);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Payment authorization failed. Please try again.';
       setSubmissionError(msg);
