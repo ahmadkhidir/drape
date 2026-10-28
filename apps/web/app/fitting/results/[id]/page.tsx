@@ -12,6 +12,7 @@ import { BeforeAfterSlider } from '../../../../components/fitting/BeforeAfterSli
 import { EphemeralCountdown } from '../../../../components/fitting/EphemeralCountdown';
 import { getSilhouetteById } from '../../../../lib/silhouettes';
 import { FittingSession } from '../../../../lib/fitting-types';
+import { BrandLogo } from '../../../../components/brand/BrandLogo';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -165,6 +166,8 @@ function FittingResultsContent({ fittingId }: { fittingId: string }) {
       <header className="sticky top-0 z-40 w-full border-b border-grey-300/60 dark:border-grey-700/60 bg-alabaster/90 dark:bg-obsidian/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
           <div className="flex items-center space-x-4">
+            <BrandLogo variant="lockup" size="sm" />
+            <span className="text-grey-300 dark:text-grey-700">|</span>
             <Link
               href="/fitting"
               className="inline-flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-grey-600 dark:text-grey-400 hover:text-gold transition-colors"

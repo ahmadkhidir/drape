@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { ClothSandbox } from '../components/canvas/ClothSandbox';
 import { MicroWeaveInspector } from '../components/canvas/MicroWeaveInspector';
+import { BrandLogo } from '../components/brand/BrandLogo';
 
 interface FabricItem {
   id: string;
@@ -85,12 +86,7 @@ export default function AtelierHomePage() {
       <header className="sticky top-0 z-40 w-full border-b border-grey-300/60 dark:border-grey-700/60 bg-alabaster/80 dark:bg-obsidian/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
           {/* Brand Mark & Monogram Lockup */}
-          <Link href="/" className="flex items-center space-x-3">
-            <img src="/brand/monogram-gold.svg" alt="Drape Atelier Monogram" className="h-8 w-8 object-contain" />
-            <span className="font-display text-xl tracking-widest text-ink dark:text-alabaster uppercase font-semibold">
-              DRAPE
-            </span>
-          </Link>
+          <BrandLogo variant="lockup" size="md" />
 
           {/* Editorial Navigation */}
           <nav className="hidden md:flex items-center space-x-8 text-sm font-medium tracking-wide text-grey-700 dark:text-grey-300">
@@ -286,9 +282,7 @@ export default function AtelierHomePage() {
       <footer className="border-t border-grey-300 dark:border-grey-700 bg-alabaster dark:bg-obsidian py-12 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-grey-600 dark:text-grey-400 font-sans">
           <div className="flex items-center space-x-3">
-            <span className="font-display text-lg font-semibold tracking-wider text-ink dark:text-alabaster">
-              DRAPE
-            </span>
+            <BrandLogo variant="wordmark" size="sm" asLink={false} />
             <span className="text-grey-400">·</span>
             <span>The Sensory Digital Fabric Atelier</span>
           </div>

@@ -20,6 +20,7 @@ import { createPaymentIntent, createOrder } from '../../lib/checkoutApi';
 
 
 import { formatPrice } from '../../lib/currency';
+import { BrandLogo } from '../../components/brand/BrandLogo';
 
 const MASTER_TAILOR_STUDIOS = [
   { id: 'tailor_savile_row', name: 'Atelier Savile Row & Co.', city: 'London, UK', leadTime: '3-5 business days' },
