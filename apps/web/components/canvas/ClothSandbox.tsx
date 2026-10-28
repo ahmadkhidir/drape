@@ -733,7 +733,7 @@ export function ClothSandbox({
 
       {/* Bottom Center Gravity Mode Presets (FEAT-002 & Screen 3) */}
       <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex items-center space-x-1 p-1 rounded-full bg-ink/80 dark:bg-obsidian/80 backdrop-blur-md border border-grey-300/30 dark:border-grey-700/50 shadow-md">
-        {(['breeze', 'drape', 'drop'] as GravityPreset[]).map((preset) => (
+        {(['breeze', 'drape'] as GravityPreset[]).map((preset) => (
           <button
             key={preset}
             type="button"

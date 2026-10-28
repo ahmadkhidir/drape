@@ -5,7 +5,7 @@
 
 export type GraphicsTier = 'booting' | 'webgpu' | 'webgl2' | 'fallback-media';
 export type LifecycleStatus = 'booting' | 'ready' | 'context-lost' | 'restoring' | 'error';
-export type GravityPreset = 'breeze' | 'drape' | 'drop';
+export type GravityPreset = 'breeze' | 'drape';
 
 /**
  * Physical property matrix for calibrated textile simulation.

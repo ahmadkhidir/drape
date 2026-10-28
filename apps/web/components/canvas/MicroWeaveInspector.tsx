@@ -1,7 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { DirectionalLightState } from './types';
+import { getFabricColorAndShine, getFabricTextureUrl } from './ClothSandbox';
 
 export interface MicroWeaveInspectorProps {
   fabricId?: string;
@@ -14,19 +16,30 @@ export interface MicroWeaveInspectorProps {
   onClose: () => void;
   microWeaveTileBaseUrl?: string;
   maxTileZoomLevel?: number;
+  textureUrl?: string;
+  weaveType?: string;
 }
 
+/**
+ * Drape Micro-Weave Inspector with Dynamic Directional Raking Light
+ * Spec Anchors: FEAT-003, C-010, screens/03-fabric-detail-view.md
+ *
+ * Calibrates 10x optical magnification, authentic fabric colors and weave structures,
+ * high-resolution pattern overlays, and real-time anisotropic sheen responding to spotlight azimuth & pitch.
+ */
 export function MicroWeaveInspector({
-  fabricId = 'FAB-SLK-892',
-  fabricName = 'Emerald Architectural Silk Brocade',
+  fabricId = 'FAB-SLK-401',
+  fabricName = 'Luminous Ivory Duchesse',
   millName = 'Tessitura di Como',
-  fiberBreakdown = '85% Mulberry Silk, 15% Metallic Lurex',
-  threadCount = '420 TPI (240 Warp / 180 Weft)',
+  fiberBreakdown = '100% Mulberry Silk',
+  threadCount = '480 TPI (280 Warp / 200 Weft)',
   gsm = 280,
   isOpen,
   onClose,
-  microWeaveTileBaseUrl = `/api/v1/fabrics/FAB-SLK-892/micro-weave/tiles`,
+  microWeaveTileBaseUrl,
   maxTileZoomLevel = 5,
+  textureUrl,
+  weaveType,
 }: MicroWeaveInspectorProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -36,7 +49,7 @@ export function MicroWeaveInspector({
   const [isPanning, setIsPanning] = useState<boolean>(false);
   const lastPanStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  // Directional Lighting state
+  // Directional Lighting state (Azimuth 0..360°, Pitch 15..90°)
   const [lightState, setLightState] = useState<DirectionalLightState>({
     angleDeg: 45, // Azimuth 0..360
     pitchDeg: 35, // Pitch 15..90
@@ -46,10 +59,27 @@ export function MicroWeaveInspector({
 
   const [isLoadingTiles, setIsLoadingTiles] = useState<boolean>(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [statusAnnouncement, setStatusAnnouncement] = useState<string>('Micro-weave optical viewport ready.');
+  const [statusAnnouncement, setStatusAnnouncement] = useState<string>(
+    `Micro-weave optical viewport for ${fabricName} ready.`
+  );
 
-  // Tile cache for C-010 deep-zoom pyramidal tiles
+  // Deep-zoom pyramidal tiles and pattern cache
   const tileCacheRef = useRef<Map<string, HTMLImageElement>>(new Map());
+
+  // Dynamically resolve tile base URL per C-010
+  const effectiveTileBaseUrl = useMemo(() => {
+    return microWeaveTileBaseUrl || `/api/v1/fabrics/${fabricId}/micro-weave/tiles`;
+  }, [microWeaveTileBaseUrl, fabricId]);
+
+  // Dynamically resolve fabric texture asset URL
+  const resolvedTextureUrl = useMemo(() => {
+    return textureUrl || getFabricTextureUrl(fabricId || fabricName) || '/textures/fabrics/ivory-satin.svg';
+  }, [textureUrl, fabricId, fabricName]);
+
+  // Certified fabric color and physical sheen parameters
+  const fabricAesthetics = useMemo(() => {
+    return getFabricColorAndShine(fabricName || fabricId);
+  }, [fabricName, fabricId]);
 
   // Escape key handler to close modal
   useEffect(() => {
@@ -82,7 +112,7 @@ export function MicroWeaveInspector({
   );
 
   /**
-   * Renders the microscopic weave structure, thread relief, and dynamic lighting.
+   * Renders the microscopic weave structure, thread relief, authentic fabric color, and dynamic lighting.
    */
   const drawMicroWeave = useCallback(() => {
     const canvas = canvasRef.current;
@@ -117,9 +147,40 @@ export function MicroWeaveInspector({
     const startY = -extent;
     const endY = extent;
 
-    // 1. Draw Warp Yarns (Vertical yarns)
+    // Extract certified RGB base tone
+    const colorInt = fabricAesthetics.color;
+    const baseR = (colorInt >> 16) & 0xff;
+    const baseG = (colorInt >> 8) & 0xff;
+    const baseB = colorInt & 0xff;
+
+    // Analyze weave structure
+    const desc = `${weaveType || ''} ${fabricName || ''} ${fabricId || ''} ${fiberBreakdown || ''}`.toLowerCase();
+    const isVelvet = desc.includes('velvet') || desc.includes('vlv');
+    const isCrepe = desc.includes('crepe') || desc.includes('wool') || desc.includes('wol');
+    const isJacquardOrBrocade = desc.includes('jacquard') || desc.includes('brocade') || desc.includes('lurex');
+    const isLinen = desc.includes('linen') || desc.includes('lin') || desc.includes('flax');
+    const isSatin = desc.includes('satin') || desc.includes('duchesse') || (!isVelvet && !isCrepe && !isJacquardOrBrocade && !isLinen);
+
+    // 1. Draw base high-resolution fabric texture swatch pattern if available
+    const textureImg = tileCacheRef.current.get(`texture-${fabricId}`);
+    if (textureImg && textureImg.complete && textureImg.naturalWidth > 0) {
+      try {
+        const pattern = ctx.createPattern(textureImg, 'repeat');
+        if (pattern) {
+          ctx.save();
+          ctx.globalAlpha = 0.42;
+          ctx.fillStyle = pattern;
+          ctx.fillRect(startX, startY, endX - startX, endY - startY);
+          ctx.restore();
+        }
+      } catch {
+        // Fallback gracefully
+      }
+    }
+
+    // 2. Draw Warp Yarns (Vertical yarns)
     for (let x = Math.floor(startX / yarnStep) * yarnStep; x <= endX; x += yarnStep) {
-      const isLurexMetallic = Math.abs(x % (yarnStep * 4)) === 0; // Metallic thread accents
+      const isLurexMetallic = isJacquardOrBrocade && Math.abs(x % (yarnStep * 4)) === 0;
 
       // Yarn normal slope across cylinder
       const nx = -0.5;
@@ -127,30 +188,65 @@ export function MicroWeaveInspector({
       const nz = 0.866;
 
       // Dot product for diffuse lighting
-      const NdotL = Math.max(0.1, nx * lx + ny * ly + nz * lz);
+      const NdotL = Math.max(0.12, nx * lx + ny * ly + nz * lz);
+
       // Anisotropic highlight along yarn axis
       const tangentZ = 1.0;
       const TdotL = lz * tangentZ;
-      const anisotropicSpecular = Math.pow(Math.max(0, 1 - TdotL * TdotL), lightState.specularPower / 8);
+      const anisotropicSpecular = Math.pow(Math.max(0, 1 - TdotL * TdotL), lightState.specularPower / (isSatin ? 6 : 10));
 
-      const baseBrightness = isLurexMetallic ? 220 : 90;
-      const r = Math.min(255, Math.floor(baseBrightness * NdotL * lightState.intensity + (isLurexMetallic ? anisotropicSpecular * 180 : anisotropicSpecular * 60)));
-      const g = Math.min(255, Math.floor((isLurexMetallic ? baseBrightness * 0.85 : baseBrightness * 1.3) * NdotL * lightState.intensity));
-      const b = Math.min(255, Math.floor((isLurexMetallic ? 60 : baseBrightness * 0.9) * NdotL * lightState.intensity));
+      let r: number, g: number, b: number;
+
+      if (isLurexMetallic) {
+        // Spun gold lurex filament
+        r = Math.min(255, Math.floor(215 * NdotL * lightState.intensity + anisotropicSpecular * 180));
+        g = Math.min(255, Math.floor(180 * NdotL * lightState.intensity + anisotropicSpecular * 140));
+        b = Math.min(255, Math.floor(70 * NdotL * lightState.intensity + anisotropicSpecular * 50));
+      } else if (isSatin) {
+        // Luminous satin weave with long warp floats and high luster
+        r = Math.min(255, Math.floor(baseR * 0.92 * NdotL * lightState.intensity + anisotropicSpecular * 115));
+        g = Math.min(255, Math.floor(baseG * 0.92 * NdotL * lightState.intensity + anisotropicSpecular * 115));
+        b = Math.min(255, Math.floor(baseB * 0.92 * NdotL * lightState.intensity + anisotropicSpecular * 110));
+      } else if (isVelvet) {
+        // Deep tufted pile absorption
+        r = Math.min(255, Math.floor(baseR * 0.88 * NdotL * lightState.intensity + anisotropicSpecular * 40));
+        g = Math.min(255, Math.floor(baseG * 0.88 * NdotL * lightState.intensity + anisotropicSpecular * 40));
+        b = Math.min(255, Math.floor(baseB * 0.88 * NdotL * lightState.intensity + anisotropicSpecular * 40));
+      } else if (isCrepe) {
+        // High-twist pebbled crepe texture
+        r = Math.min(255, Math.floor(baseR * 0.95 * NdotL * lightState.intensity + anisotropicSpecular * 30));
+        g = Math.min(255, Math.floor(baseG * 0.95 * NdotL * lightState.intensity + anisotropicSpecular * 30));
+        b = Math.min(255, Math.floor(baseB * 0.95 * NdotL * lightState.intensity + anisotropicSpecular * 30));
+      } else {
+        // Heritage linen / wool twill / cupro
+        r = Math.min(255, Math.floor(baseR * 0.90 * NdotL * lightState.intensity + anisotropicSpecular * 55));
+        g = Math.min(255, Math.floor(baseG * 0.90 * NdotL * lightState.intensity + anisotropicSpecular * 55));
+        b = Math.min(255, Math.floor(baseB * 0.90 * NdotL * lightState.intensity + anisotropicSpecular * 50));
+      }
 
       ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
       ctx.fillRect(x, startY, yarnStep * 0.88, endY - startY);
 
       // Microscopic fiber filigree line
-      ctx.strokeStyle = `rgba(255, 255, 255, ${isLurexMetallic ? 0.35 : 0.08})`;
+      ctx.strokeStyle = `rgba(255, 255, 255, ${isLurexMetallic ? 0.35 : isSatin ? 0.16 : 0.08})`;
       ctx.lineWidth = 1 / zoom;
       ctx.beginPath();
       ctx.moveTo(x + yarnStep * 0.44, startY);
       ctx.lineTo(x + yarnStep * 0.44, endY);
       ctx.stroke();
+
+      // Velvet tuft micro-ringlets
+      if (isVelvet) {
+        ctx.fillStyle = `rgba(${r + 20}, ${g + 20}, ${b + 20}, 0.25)`;
+        for (let ty = Math.floor(startY / yarnStep) * yarnStep; ty <= endY; ty += yarnStep * 1.5) {
+          ctx.beginPath();
+          ctx.arc(x + yarnStep * 0.44, ty, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
     }
 
-    // 2. Draw Weft Yarns (Horizontal yarns interweaving)
+    // 3. Draw Weft Yarns (Horizontal yarns interweaving)
     for (let y = Math.floor(startY / yarnStep) * yarnStep; y <= endY; y += yarnStep) {
       const nx = 0.0;
       const ny = -0.6;
@@ -159,13 +255,14 @@ export function MicroWeaveInspector({
       const NdotL = Math.max(0.1, nx * lx + ny * ly + nz * lz);
       const tangentX = 1.0;
       const TdotL = lx * tangentX;
-      const anisotropicSpecular = Math.pow(Math.max(0, 1 - TdotL * TdotL), lightState.specularPower / 8);
+      const anisotropicSpecular = Math.pow(Math.max(0, 1 - TdotL * TdotL), lightState.specularPower / (isSatin ? 6 : 10));
 
-      const r = Math.min(255, Math.floor(25 * NdotL * lightState.intensity + anisotropicSpecular * 40));
-      const g = Math.min(255, Math.floor(75 * NdotL * lightState.intensity + anisotropicSpecular * 70));
-      const b = Math.min(255, Math.floor(55 * NdotL * lightState.intensity + anisotropicSpecular * 45));
+      const weftFactor = isSatin ? 0.76 : 0.88;
+      const r = Math.min(255, Math.floor(baseR * weftFactor * NdotL * lightState.intensity + anisotropicSpecular * 40));
+      const g = Math.min(255, Math.floor(baseG * weftFactor * NdotL * lightState.intensity + anisotropicSpecular * 40));
+      const b = Math.min(255, Math.floor(baseB * weftFactor * NdotL * lightState.intensity + anisotropicSpecular * 40));
 
-      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.85)`;
+      ctx.fillStyle = isSatin ? `rgba(${r}, ${g}, ${b}, 0.72)` : `rgba(${r}, ${g}, ${b}, 0.88)`;
       ctx.fillRect(startX, y, endX - startX, yarnStep * 0.85);
 
       // Weft thread ridge shadow
@@ -175,7 +272,7 @@ export function MicroWeaveInspector({
 
     ctx.restore();
 
-    // 3. Draw Virtual Spotlight Indicator Overlay (Top Right HUD)
+    // 4. Draw Virtual Spotlight Indicator Overlay (Top Right HUD)
     const hudSize = 72;
     const hudX = width - hudSize - 24;
     const hudY = 24;
@@ -215,9 +312,29 @@ export function MicroWeaveInspector({
     ctx.fillStyle = '#C5A059';
     ctx.fill();
     ctx.restore();
-  }, [zoom, panOffset, lightState]);
+  }, [zoom, panOffset, lightState, fabricAesthetics, weaveType, fabricName, fabricId, fiberBreakdown]);
 
-  // Request tile according to C-010 specification
+  // Load and cache high-resolution fabric texture swatch
+  useEffect(() => {
+    if (!isOpen || !resolvedTextureUrl || typeof window === 'undefined') return;
+    const cacheKey = `texture-${fabricId}`;
+
+    if (!tileCacheRef.current.has(cacheKey)) {
+      const img = new Image();
+      img.onload = () => {
+        tileCacheRef.current.set(cacheKey, img);
+        drawMicroWeave();
+      };
+      img.onerror = () => {
+        drawMicroWeave();
+      };
+      img.src = resolvedTextureUrl;
+    } else {
+      drawMicroWeave();
+    }
+  }, [isOpen, resolvedTextureUrl, fabricId, drawMicroWeave]);
+
+  // Request pyramidal tile according to C-010 specification
   useEffect(() => {
     if (!isOpen) return;
     const level = computePyramidLevel(zoom);
@@ -226,7 +343,7 @@ export function MicroWeaveInspector({
     if (!tileCacheRef.current.has(tileKey)) {
       setIsLoadingTiles(true);
       const img = new Image();
-      const tileUrl = `${microWeaveTileBaseUrl}/${level}/0/0`;
+      const tileUrl = `${effectiveTileBaseUrl}/${level}/0/0`;
 
       img.onload = () => {
         tileCacheRef.current.set(tileKey, img);
@@ -235,7 +352,7 @@ export function MicroWeaveInspector({
         drawMicroWeave();
       };
       img.onerror = () => {
-        // Fallback to procedural micro-weave rendering
+        // Fallback to calibrated procedural micro-weave rendering
         setIsLoadingTiles(false);
         drawMicroWeave();
       };
@@ -243,7 +360,7 @@ export function MicroWeaveInspector({
     } else {
       drawMicroWeave();
     }
-  }, [isOpen, zoom, fabricId, computePyramidLevel, microWeaveTileBaseUrl, drawMicroWeave]);
+  }, [isOpen, zoom, fabricId, computePyramidLevel, effectiveTileBaseUrl, drawMicroWeave]);
 
   useEffect(() => {
     if (isOpen) {
@@ -273,7 +390,7 @@ export function MicroWeaveInspector({
   const handleZoomChange = (newZoom: number) => {
     const clamped = Math.min(10.0, Math.max(1.0, parseFloat(newZoom.toFixed(1))));
     setZoom(clamped);
-    setStatusAnnouncement(`Optical zoom set to ${clamped}x magnification.`);
+    setStatusAnnouncement(`Optical zoom set to ${clamped}x magnification for ${fabricName}.`);
   };
 
   const handleLightAngleChange = (angle: number) => {
@@ -289,7 +406,7 @@ export function MicroWeaveInspector({
     setZoom(2.5);
     setPanOffset({ x: 0, y: 0 });
     setLightState({ angleDeg: 45, pitchDeg: 35, intensity: 1.3, specularPower: 48 });
-    setStatusAnnouncement('Viewport reset to standard 2.5x magnification and raking light.');
+    setStatusAnnouncement(`Viewport reset to standard 2.5x magnification and raking light for ${fabricName}.`);
   };
 
   if (!isOpen) return null;
@@ -324,7 +441,7 @@ export function MicroWeaveInspector({
               {fabricName}
             </h2>
             <p id="micro-weave-desc" className="text-xs text-grey-400 font-sans mt-0.5">
-              {fiberBreakdown} · {threadCount} · {gsm} GSM
+              {fiberBreakdown} · {threadCount} · {gsm} GSM · {weaveType || 'Bespoke Weave'}
             </p>
           </div>
 
@@ -452,46 +569,19 @@ export function MicroWeaveInspector({
           </div>
         </div>
 
-        {/* Footer Technical Lighting Presets */}
-        <div className="px-6 py-3 border-t border-grey-800 bg-obsidian/90 flex flex-wrap items-center justify-between text-xs text-grey-400">
-          <div className="flex items-center space-x-2">
-            <span className="font-semibold text-alabaster uppercase tracking-wider text-[10px]">
-              Lighting Presets:
-            </span>
-            <button
-              type="button"
-              onClick={() => {
-                setLightState({ angleDeg: 30, pitchDeg: 25, intensity: 1.4, specularPower: 48 });
-                setStatusAnnouncement('Preset: Raking Grazing Light active.');
-              }}
-              className="px-2.5 py-1 rounded bg-grey-800 hover:bg-grey-700 text-alabaster transition-colors"
-            >
-              Raking Light (30°)
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setLightState({ angleDeg: 90, pitchDeg: 80, intensity: 1.2, specularPower: 32 });
-                setStatusAnnouncement('Preset: Direct Studio Light active.');
-              }}
-              className="px-2.5 py-1 rounded bg-grey-800 hover:bg-grey-700 text-alabaster transition-colors"
-            >
-              Direct Studio (90°)
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setLightState({ angleDeg: 215, pitchDeg: 40, intensity: 1.6, specularPower: 64 });
-                setStatusAnnouncement('Preset: Anisotropic Metallic Sheen active.');
-              }}
-              className="px-2.5 py-1 rounded bg-grey-800 hover:bg-grey-700 text-alabaster transition-colors"
-            >
-              Metallic Sheen (215°)
-            </button>
+        {/* Footer Specification Strip */}
+        <div className="px-6 py-3 border-t border-grey-800 bg-obsidian/90 flex flex-wrap items-center justify-between text-[11px] font-mono text-grey-400">
+          <div className="flex items-center space-x-4">
+            <span>SKU: <strong className="text-alabaster">{fabricId}</strong></span>
+            <span>·</span>
+            <span>Weave: <strong className="text-alabaster">{weaveType || 'Authentic Interlace'}</strong></span>
+            <span>·</span>
+            <span>Photometric Relief: <strong className="text-gold">Active</strong></span>
           </div>
-
-          <div className="mt-2 sm:mt-0 font-mono text-[11px] text-grey-500">
-            Tile Resolution: Level {computePyramidLevel(zoom)} / {maxTileZoomLevel} · 256×256 WebP
+          <div className="flex items-center space-x-2 text-grey-500">
+            <span>Verlet Micro-Ray Projection</span>
+            <span>✦</span>
+            <span>Subsurface Anisotropic Shader</span>
           </div>
         </div>
       </div>

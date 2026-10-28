@@ -7,6 +7,7 @@ import { FabricDetail } from '../../../lib/catalog-types';
 import { fetchFabric } from '../../../lib/catalog-data';
 import { SensoryProfileRadar } from '../../../components/catalog/SensoryProfileRadar';
 import { ClothSandbox } from '../../../components/canvas/ClothSandbox';
+import { MicroWeaveInspector } from '../../../components/canvas/MicroWeaveInspector';
 import { BrandLogo } from '../../../components/brand/BrandLogo';
 
 /**
@@ -21,9 +22,10 @@ export default function FabricDetailPage() {
   const [fabric, setFabric] = useState<FabricDetail | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
-  const [gravityMode, setGravityMode] = useState<'breeze' | 'drape' | 'drop'>('drape');
+  const [gravityMode, setGravityMode] = useState<'breeze' | 'drape'>('drape');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [swatchOrdered, setSwatchOrdered] = useState<boolean>(false);
+  const [isMicroWeaveOpen, setIsMicroWeaveOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'3d' | 'macro'>('3d');
 
   useEffect(() => {
@@ -183,7 +185,7 @@ export default function FabricDetailPage() {
               {/* Gravity Physics Toggle */}
               {activeTab === '3d' && (
                 <div className="absolute top-4 right-4 z-20 flex items-center space-x-1.5 bg-obsidian/80 backdrop-blur-md p-1 rounded border border-grey-700 text-[11px] font-sans uppercase tracking-wider">
-                  {(['breeze', 'drape', 'drop'] as const).map((mode) => (
+                  {(['breeze', 'drape'] as const).map((mode) => (
                     <button
                       key={mode}
                       type="button"
