@@ -445,5 +445,36 @@ describe('Atelier WebGPU Craft Polish & Material Shader Calibration', () => {
     engine.release();
     expect(engine.grabbedClusterCount).toBe(0);
   });
+  it('enforces taut inextensibility when dragging downward from anchors', () => {
+    const engine = new VerletClothEngine({
+      gridX: 10,
+      gridY: 10,
+      spacing: 0.1,
+      pinMode: 'atelier_dual',
+      physicsMatrix: defaultPhysics,
+    });
+
+    // Grab a particle near the center (row 4, col 4)
+    const centerIdx = 4 * 10 + 4;
+    engine.grab(engine.positions[centerIdx * 3], engine.positions[centerIdx * 3 + 1], 0.2);
+
+    const anchorIdx = engine.nearestAnchorIdx[centerIdx];
+    const maxAllowedDist = engine.minAnchorDist[centerIdx] * 1.03;
+    const anchorY = engine.positions[anchorIdx * 3 + 1];
+
+    // Attempt to drag particle 10 units downward (simulating stretching like rubber)
+    engine.drag(0, -10.0, 0);
+    engine.step(1 / 60);
+
+    const draggedP = centerIdx * 3;
+    const actualDx = engine.positions[draggedP] - engine.positions[anchorIdx * 3];
+    const actualDy = engine.positions[draggedP + 1] - anchorY;
+    const actualDz = engine.positions[draggedP + 2] - engine.positions[anchorIdx * 3 + 2];
+    const actualDist = Math.sqrt(actualDx * actualDx + actualDy * actualDy + actualDz * actualDz);
+
+    // Particle CANNOT exceed taut distance (within 5% tolerance) - no rubber stretching
+    expect(actualDist).toBeLessThanOrEqual(maxAllowedDist * 1.05);
+  });
+
 
 });
