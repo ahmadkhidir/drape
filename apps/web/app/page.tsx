@@ -238,19 +238,21 @@ export default function AtelierHomePage() {
 
             {/* Right Interactive WebGPU Canvas Column */}
             <div className="lg:col-span-7">
-              <div className="relative rounded-lg p-2 bg-gradient-to-tr from-gold/15 via-transparent to-ink/5 dark:from-gold/10 dark:to-alabaster/5">
-                <ClothSandbox
-                  fabricId={activeFabric.sku}
-                  fabricName={activeFabric.name}
-                  textureUrl={activeFabric.textureUrl}
-                  gsm={activeFabric.gsm}
-                  composition={activeFabric.fiberBreakdown}
-                  weaveType={activeFabric.weaveType}
-                  drapeCoefficient={activeFabric.drapeCoefficient}
-                  stiffnessRating={activeFabric.stiffnessRating}
-                  onInspectWeave={() => handleOpenMicroWeave(activeFabric)}
-                  className="h-[380px] sm:h-[520px] shadow-lg"
-                />
+              <div className="relative rounded-lg overflow-hidden border border-grey-300/80 dark:border-grey-700/80 bg-obsidian shadow-lg">
+                <div className="aspect-[4/3] sm:aspect-[16/10] w-full relative">
+                  <ClothSandbox
+                    fabricId={activeFabric.sku}
+                    fabricName={activeFabric.name}
+                    textureUrl={activeFabric.textureUrl}
+                    gsm={activeFabric.gsm}
+                    composition={activeFabric.fiberBreakdown}
+                    weaveType={activeFabric.weaveType}
+                    drapeCoefficient={activeFabric.drapeCoefficient}
+                    stiffnessRating={activeFabric.stiffnessRating}
+                    onInspectWeave={() => handleOpenMicroWeave(activeFabric)}
+                    className="w-full h-full min-h-[380px] sm:min-h-[480px]"
+                  />
+                </div>
               </div>
             </div>
           </div>

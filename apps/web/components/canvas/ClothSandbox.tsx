@@ -176,9 +176,13 @@ export function ClothSandbox({
     const rect = canvasRef.current.getBoundingClientRect();
     const ndcX = ((clientX - rect.left) / rect.width) * 2 - 1;
     const ndcY = -(((clientY - rect.top) / rect.height) * 2 - 1);
-    // Project into approximate world coordinate space
-    const worldX = ndcX * 1.8;
-    const worldY = ndcY * 1.8;
+    // Project into dynamic world coordinate space calibrated by adaptive camera zoom
+    const camZ = cameraRef.current?.position.z || 3.5;
+    const halfHeight = camZ * Math.tan((45 * Math.PI) / 360);
+    const aspect = rect.width / (rect.height || 1);
+    const camY = cameraRef.current?.position.y || 0.05;
+    const worldX = ndcX * halfHeight * aspect;
+    const worldY = (ndcY * halfHeight) + camY;
     return { x: worldX, y: worldY };
   };
 
@@ -332,8 +336,12 @@ export function ClothSandbox({
       const scene = new THREE.Scene();
       sceneRef.current = scene;
 
-      const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-      camera.position.set(0, 0, 4.2);
+      const aspect = width / height;
+      const camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 100);
+      // Adaptive camera zoom: closer on mobile portrait so fabric is hero-sized and prominent
+      const targetZ = aspect < 0.9 ? 3.35 : aspect < 1.2 ? 3.5 : 3.7;
+      camera.position.set(0, 0.05, targetZ);
+      camera.lookAt(0, 0, 0);
       cameraRef.current = camera;
 
       // Studio lighting setup per branding.md - calibrated for bright luxury luster
@@ -506,12 +514,17 @@ export function ClothSandbox({
     canvas.addEventListener('webglcontextlost', handleContextLost);
     canvas.addEventListener('webglcontextrestored', handleContextRestored);
 
-    // Responsive Canvas Resize Handler
+    // Responsive Canvas Resize Handler with Adaptive Camera Distance
     const handleResize = () => {
       if (!canvas || !rendererRef.current || !cameraRef.current) return;
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
-      cameraRef.current.aspect = width / height;
+      if (width === 0 || height === 0) return;
+      const aspect = width / height;
+      cameraRef.current.aspect = aspect;
+      const targetZ = aspect < 0.9 ? 3.35 : aspect < 1.2 ? 3.5 : 3.7;
+      cameraRef.current.position.set(0, 0.05, targetZ);
+      cameraRef.current.lookAt(0, 0, 0);
       cameraRef.current.updateProjectionMatrix();
       rendererRef.current.setSize(width, height, false);
     };
@@ -707,7 +720,7 @@ export function ClothSandbox({
 
       {/* Bottom Center Gravity Mode Presets (FEAT-002 & Screen 3) */}
       {viewMode === 'live' && (
-        <div className="absolute bottom-14 sm:bottom-16 left-1/2 -translate-x-1/2 z-10 flex items-center space-x-1 p-0.5 sm:p-1 rounded-full bg-ink/80 dark:bg-obsidian/80 backdrop-blur-md border border-grey-300/30 dark:border-grey-700/50 shadow-md">
+        <div className="absolute bottom-20 sm:bottom-20 left-1/2 -translate-x-1/2 z-10 flex items-center space-x-1 p-0.5 sm:p-1 rounded-full bg-ink/80 dark:bg-obsidian/80 backdrop-blur-md border border-grey-300/30 dark:border-grey-700/50 shadow-md">
         {(['breeze', 'drape'] as GravityPreset[]).map((preset) => (
           <button
             key={preset}
@@ -742,7 +755,7 @@ export function ClothSandbox({
       )}
 
       {/* Bottom Physical Provenance Bar */}
-      <div className="absolute bottom-2 left-2 right-2 sm:left-4 sm:right-4 z-10 flex flex-col sm:flex-row sm:items-center justify-between p-2 sm:p-2.5 rounded-md bg-alabaster/90 dark:bg-obsidian/90 backdrop-blur-md border border-grey-300 dark:border-grey-700 text-[10px] sm:text-xs gap-1 sm:gap-2">
+      <div className="absolute bottom-2 left-2 right-2 sm:bottom-3 sm:left-4 sm:right-4 z-10 flex flex-col sm:flex-row sm:items-center justify-between p-2 sm:p-2.5 rounded-md bg-alabaster/90 dark:bg-obsidian/90 backdrop-blur-md border border-grey-300 dark:border-grey-700 text-[10px] sm:text-xs gap-1 sm:gap-2">
         <div className="truncate">
           <span className="font-semibold text-ink dark:text-alabaster inline sm:block mr-2 sm:mr-0">{fabricName}</span>
           <span className="text-grey-600 dark:text-grey-400">
