@@ -60,6 +60,15 @@ export class VerletClothEngine {
   private grabbedTargetY: number = 0;
   private grabbedTargetZ: number = 0;
   private isInteracting: boolean = false;
+  // Soft-radius pinch cluster buffers (zero-allocation)
+  private readonly maxGrabbedCluster: number = 64;
+  public grabbedClusterCount: number = 0;
+  public readonly grabbedClusterIndices: Int32Array;
+  public readonly grabbedClusterWeights: Float32Array;
+  public readonly grabbedClusterOffsetsX: Float32Array;
+  public readonly grabbedClusterOffsetsY: Float32Array;
+  public readonly grabbedClusterOffsetsZ: Float32Array;
+
   private gravityPreset: GravityPreset = 'drape';
   private elapsedTime: number = 0;
 
@@ -89,6 +98,12 @@ export class VerletClothEngine {
     this.normals = new Float32Array(this.particleCount * 3);
     this.uvs = new Float32Array(this.particleCount * 2);
     this.pinned = new Uint8Array(this.particleCount);
+    this.grabbedClusterIndices = new Int32Array(this.maxGrabbedCluster);
+    this.grabbedClusterWeights = new Float32Array(this.maxGrabbedCluster);
+    this.grabbedClusterOffsetsX = new Float32Array(this.maxGrabbedCluster);
+    this.grabbedClusterOffsetsY = new Float32Array(this.maxGrabbedCluster);
+    this.grabbedClusterOffsetsZ = new Float32Array(this.maxGrabbedCluster);
+
 
     // Initialize physical properties from C-009 physicsMatrix
     this.massDensity = Math.max(0.05, config.physicsMatrix.massDensity || 0.28);
@@ -160,7 +175,10 @@ export class VerletClothEngine {
         if (this.pinMode === 'atelier_dual') {
           const pinLeft = Math.round(this.gridX * 0.22);
           const pinRight = Math.round(this.gridX * 0.78);
-          if (y === 0 && (x === pinLeft || x === pinRight)) {
+          // Realistic atelier clamp: pin a realistic support width (small radius of 3 particles) along top edge
+          const isLeftClamp = Math.abs(x - pinLeft) <= 1 && y === 0;
+          const isRightClamp = Math.abs(x - pinRight) <= 1 && y === 0;
+          if (isLeftClamp || isRightClamp) {
             this.pinned[idx] = 1;
           } else {
             this.pinned[idx] = 0;
@@ -312,9 +330,11 @@ export class VerletClothEngine {
   }
 
   /**
-   * Grab nearest particle at world coordinates.
+   * Grab nearest particle at world coordinates, and bind a soft pinch cluster
+   * within a small radius so dragged fabric moves as an authentic folded patch
+   * instead of a sharp needle spike.
    */
-  public grab(worldX: number, worldY: number, radius: number = 0.5): number {
+  public grab(worldX: number, worldY: number, radius: number = 0.38): number {
     let closestIdx = -1;
     let minSqDist = radius * radius;
 
@@ -336,13 +356,41 @@ export class VerletClothEngine {
       this.grabbedTargetY = worldY;
       this.grabbedTargetZ = this.positions[closestIdx * 3 + 2];
       this.isInteracting = true;
+
+      // Populate soft-radius cluster around the pinch center
+      this.grabbedClusterCount = 0;
+      const pinchRadius = Math.max(radius, this.spacing * 2.5);
+      const rSq = pinchRadius * pinchRadius;
+
+      for (let i = 0; i < this.particleCount; i++) {
+        if (this.pinned[i] === 1) continue;
+
+        const pIdx = i * 3;
+        const dx = this.positions[pIdx] - worldX;
+        const dy = this.positions[pIdx + 1] - worldY;
+        const sqDist = dx * dx + dy * dy;
+
+        if (sqDist <= rSq && this.grabbedClusterCount < this.maxGrabbedCluster) {
+          const cIdx = this.grabbedClusterCount++;
+          const dist = Math.sqrt(sqDist);
+          // Smooth cosine falloff from 1.0 (center) to 0.0 (edge of radius)
+          const normDist = dist / pinchRadius;
+          const weight = 0.5 * (1 + Math.cos(normDist * Math.PI));
+
+          this.grabbedClusterIndices[cIdx] = i;
+          this.grabbedClusterWeights[cIdx] = weight;
+          this.grabbedClusterOffsetsX[cIdx] = this.positions[pIdx] - worldX;
+          this.grabbedClusterOffsetsY[cIdx] = this.positions[pIdx + 1] - worldY;
+          this.grabbedClusterOffsetsZ[cIdx] = this.positions[pIdx + 2] - this.grabbedTargetZ;
+        }
+      }
     }
 
     return closestIdx;
   }
 
   /**
-   * Update position of grabbed particle.
+   * Update position of grabbed particle cluster.
    */
   public drag(worldX: number, worldY: number, worldZ: number = 0): void {
     if (this.grabbedIndex !== -1) {
@@ -383,7 +431,14 @@ export class VerletClothEngine {
    * Releases active grab, allowing gravitational relaxation.
    */
   public release(): void {
+    if (this.grabbedIndex !== -1) {
+      const pIdx = this.grabbedIndex * 3;
+      this.accelerations[pIdx] = 0;
+      this.accelerations[pIdx + 1] = 0;
+      this.accelerations[pIdx + 2] = 0;
+    }
     this.grabbedIndex = -1;
+    this.grabbedClusterCount = 0;
     this.isInteracting = false;
   }
 
@@ -440,6 +495,10 @@ export class VerletClothEngine {
         this.positions[pIdx] = this.grabbedTargetX;
         this.positions[pIdx + 1] = this.grabbedTargetY;
         this.positions[pIdx + 2] = this.grabbedTargetZ;
+
+        this.accelerations[pIdx] = 0;
+        this.accelerations[pIdx + 1] = 0;
+        this.accelerations[pIdx + 2] = 0;
         continue;
       }
 
@@ -477,8 +536,32 @@ export class VerletClothEngine {
       this.accelerations[pIdx + 2] = 0;
     }
 
-    // 2. Constraint Relaxation (Gauss-Seidel iterations)
-    const iterations = 4;
+    // Move soft-radius cluster particles smoothly with the pointer
+    if (this.isInteracting && this.grabbedClusterCount > 0) {
+      for (let c = 0; c < this.grabbedClusterCount; c++) {
+        const p = this.grabbedClusterIndices[c];
+        if (p === this.grabbedIndex || this.pinned[p] === 1) continue;
+
+        const pIdx = p * 3;
+        const w = this.grabbedClusterWeights[c];
+        const tx = this.grabbedTargetX + this.grabbedClusterOffsetsX[c];
+        const ty = this.grabbedTargetY + this.grabbedClusterOffsetsY[c];
+        const tz = this.grabbedTargetZ + this.grabbedClusterOffsetsZ[c];
+
+        this.prevPositions[pIdx] = this.positions[pIdx];
+        this.prevPositions[pIdx + 1] = this.positions[pIdx + 1];
+        this.prevPositions[pIdx + 2] = this.positions[pIdx + 2];
+
+        // Soft pinch pull: smooth quadratic falloff towards target
+        const blend = w * 0.55;
+        this.positions[pIdx] = this.positions[pIdx] * (1 - blend) + tx * blend;
+        this.positions[pIdx + 1] = this.positions[pIdx + 1] * (1 - blend) + ty * blend;
+        this.positions[pIdx + 2] = this.positions[pIdx + 2] * (1 - blend) + tz * blend;
+      }
+    }
+
+    // 2. Constraint Relaxation (6 Gauss-Seidel iterations for authentic inextensible textile weave)
+    const iterations = 6;
     for (let iter = 0; iter < iterations; iter++) {
       this.satisfyConstraints();
     }
@@ -489,9 +572,11 @@ export class VerletClothEngine {
    * Zero heap allocations.
    */
   private satisfyConstraints(): void {
-    const elasticity = this.tensileElasticity;
-    // Bending stiffness factor: scaled from 0..10 to 0.05..0.95
-    const bendingFactor = Math.min(0.95, Math.max(0.05, this.bendingStiffness * 0.1));
+    // Structural yarns have very high tensile resistance (inextensible warp/weft)
+    const structuralStiffness = Math.min(1.0, Math.max(0.92, this.tensileElasticity));
+    const shearStiffness = 0.45;
+    // Bending stiffness scaled from 0..10 rating
+    const bendingFactor = Math.min(0.85, Math.max(0.05, this.bendingStiffness * 0.08));
 
     for (let i = 0; i < this.constraintCount; i++) {
       const a = this.constraintA[i];
@@ -515,13 +600,13 @@ export class VerletClothEngine {
       this._diff = (this._dist - rest) / this._dist;
 
       // Select stiffness based on constraint classification
-      let stiffness = elasticity;
+      let stiffness = structuralStiffness;
       if (type === 2) {
         // Bending constraint (flexion resistance)
         stiffness = bendingFactor;
       } else if (type === 1) {
-        // Shear constraint
-        stiffness = elasticity * 0.75;
+        // Shear constraint (allows diagonal drape without rubber elasticity)
+        stiffness = shearStiffness;
       }
 
       const pA_pinned = this.pinned[a] === 1 || (a === this.grabbedIndex && this.isInteracting);

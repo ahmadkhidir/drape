@@ -388,4 +388,62 @@ describe('Atelier WebGPU Craft Polish & Material Shader Calibration', () => {
     expect(getFabricTextureUrl('FAB-BRC-905')).toBe('/textures/fabrics/gold-brocade.svg');
     expect(getFabricTextureUrl('FAB-LIN-404')).toBe('/textures/fabrics/raw-linen.svg');
   });
+  it('suspends cloth with realistic clamp width radius rather than single puncture points', () => {
+    const engine = new VerletClothEngine({
+      gridX: 20,
+      gridY: 20,
+      spacing: 0.1,
+      pinMode: 'atelier_dual',
+      physicsMatrix: defaultPhysics,
+    });
+
+    const pinLeft = Math.round(20 * 0.22); // 4
+    const pinRight = Math.round(20 * 0.78); // 16
+
+    // Both clamps span 3 contiguous particles along the top hem
+    expect(engine.pinned[pinLeft - 1]).toBe(1);
+    expect(engine.pinned[pinLeft]).toBe(1);
+    expect(engine.pinned[pinLeft + 1]).toBe(1);
+
+    expect(engine.pinned[pinRight - 1]).toBe(1);
+    expect(engine.pinned[pinRight]).toBe(1);
+    expect(engine.pinned[pinRight + 1]).toBe(1);
+
+    // Free drape edges and interior
+    expect(engine.pinned[0]).toBe(0);
+    expect(engine.pinned[19]).toBe(0);
+    expect(engine.pinned[10]).toBe(0); // center is free to drape naturally
+  });
+
+  it('drags cloth with soft-radius cluster pinch rather than sharp needle spike', () => {
+    const engine = new VerletClothEngine({
+      gridX: 16,
+      gridY: 16,
+      spacing: 0.1,
+      physicsMatrix: defaultPhysics,
+    });
+
+    const grabbedIdx = engine.grab(0, 0, 0.35);
+    expect(grabbedIdx).toBeGreaterThanOrEqual(0);
+    expect(engine.grabbedClusterCount).toBeGreaterThan(1); // Clusters neighboring particles
+
+    // Verify weights have smooth falloff from center outward
+    for (let i = 0; i < engine.grabbedClusterCount; i++) {
+      expect(engine.grabbedClusterWeights[i]).toBeGreaterThan(0);
+      expect(engine.grabbedClusterWeights[i]).toBeLessThanOrEqual(1.0);
+    }
+
+    // Drag moves center and smoothly influences pinch cluster without rubber spikes
+    engine.drag(0.2, 0.4, 0.1);
+    engine.step(1 / 60);
+
+    const centerP = grabbedIdx * 3;
+    expect(engine.positions[centerP]).toBeCloseTo(0.2, 1);
+    expect(engine.positions[centerP + 1]).toBeCloseTo(0.4, 1);
+
+    // Release cleanly clears cluster state
+    engine.release();
+    expect(engine.grabbedClusterCount).toBe(0);
+  });
+
 });
