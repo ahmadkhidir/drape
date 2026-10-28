@@ -1,6 +1,6 @@
 /**
  * Drape Core Fastify Server Factory
- * Spec Anchor: architecture.md, AGENTS.md, C-001..C-027
+ * Spec Anchor: architecture.md, AGENTS.md, C-001..C-029
  */
 
 import { fileURLToPath } from 'node:url';
@@ -14,6 +14,8 @@ import { consentRoutes } from './routes/consents.js';
 import { checkoutRoutes } from './routes/checkout.js';
 import { yardageRoutes } from './routes/yardage.js';
 import { tailorRoutes } from './routes/tailors.js';
+import { wardrobeRoutes } from './routes/wardrobe.js';
+import { specRoutes } from './routes/specs.js';
 
 export interface BuildServerOptions {
   fastifyOptions?: FastifyServerOptions;
@@ -64,6 +66,12 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
 
   // Register master tailor directory and concierge routing routes (C-025..C-027)
   await server.register(tailorRoutes);
+
+  // Register digital wardrobe routes (C-028, C-029)
+  await server.register(wardrobeRoutes);
+
+  // Register tailor specification and dossier export routes (C-017, C-018)
+  await server.register(specRoutes);
 
   return server;
 }
