@@ -164,7 +164,7 @@ export const BiometricConsentModal: React.FC<BiometricConsentModalProps> = ({
             </p>
             <p>
               <strong className="text-ink dark:text-alabaster font-semibold">15-Minute Ephemeral Lifecycle:</strong>{' '}
-              In accordance with Illinois BIPA and Drape compliance mandate NFR-040, your uploaded photograph is stored exclusively in encrypted, volatile RAM-disk containers. All raw portrait assets and intermediate geometric data are cryptographically wiped within 15 minutes of render delivery or session termination.
+              In accordance with Illinois BIPA and Drape&apos;s strict Privacy & Security Standards, your uploaded photograph is stored exclusively in encrypted, volatile RAM-disk containers. All raw portrait assets and intermediate geometric data are cryptographically wiped within 15 minutes of render delivery or session termination.
             </p>
             <p>
               <strong className="text-ink dark:text-alabaster font-semibold">Zero Template Retention:</strong>{' '}

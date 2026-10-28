@@ -117,10 +117,26 @@ export function FittingResultsViewContent({
         if (res.ok) {
           const data: FittingSession = await res.json();
           if (isMounted) {
-            setFitting(data);
+            const silhouette = getSilhouetteById(data.silhouetteId || querySilhouetteId || 'corseted_mermaid');
+            const fabricNameMap: Record<string, string> = {
+              'FAB-SLK-892': 'Emerald Architectural Silk Brocade',
+              'FAB-SLK-401': 'Como Silk Brocade',
+              'FAB-WOL-104': 'Savile Row Super 150s Worsted',
+              'FAB-WOL-205': 'Midnight Cashmere Coating',
+              'FAB-VEL-301': 'Giotto Cotton Silk Velvet',
+              'FAB-VEL-730': 'Venetian Crushed Velvet',
+              'FAB-LIN-112': 'Belgian Washed Linen',
+            };
+            const enrichedData: FittingSession = {
+              ...data,
+              fabricName: data.fabricName || fabricNameMap[data.fabricId] || 'Emerald Architectural Silk Brocade',
+              silhouetteName: data.silhouetteName || silhouette?.name || 'Architectural Tuxedo Dinner Jacket',
+            };
+            setFitting(enrichedData);
             if (data.motionVideoUrl) {
               setActiveViewportMode('motion');
             }
+            setIsLoading(false);
           }
           return;
         }
@@ -169,7 +185,9 @@ export function FittingResultsViewContent({
       if (isMounted) setIsLoading(false);
     }
 
-    fetchFittingRecord();
+    fetchFittingRecord().finally(() => {
+      if (isMounted) setIsLoading(false);
+    });
 
     return () => {
       isMounted = false;
@@ -190,7 +208,7 @@ export function FittingResultsViewContent({
           Fitting Session Ephemeral Lifetime Expired
         </h1>
         <p className="font-sans text-xs sm:text-sm text-grey-600 dark:text-grey-400 max-w-md">
-          In strict compliance with Illinois BIPA (740 ILCS 14/) and Drape Privacy Mandate NFR-040, all raw customer
+          In strict compliance with Illinois BIPA (740 ILCS 14/) and Drape Privacy Policies, all raw customer
           portrait assets and composite buffers have been cryptographically purged after 15 minutes.
         </p>
         <Link
@@ -277,7 +295,7 @@ export function FittingResultsViewContent({
                 {drapePercentage}% Tailoring Drape Match
               </span>
               <span className="block text-[10px] text-grey-500 font-mono">
-                Verified vs NFR-030 Master Tailor Benchmark
+                Verified vs Master Tailor Golden Benchmark
               </span>
             </div>
           </div>
@@ -312,7 +330,7 @@ export function FittingResultsViewContent({
                   }`}
                   aria-pressed={activeViewportMode === 'motion'}
                 >
-                  360° Looping Catwalk Walk (FEAT-006)
+                  360° Looping Catwalk Walk
                 </button>
               </div>
 

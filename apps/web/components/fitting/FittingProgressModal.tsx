@@ -80,93 +80,94 @@ export const FittingProgressModal: React.FC<FittingProgressModalProps> = ({
       setElapsedSeconds(Math.floor((Date.now() - startTime) / 1000));
     }, 200);
 
-    // Connect to WebSocket endpoint per C-013
     let wsConnected = false;
-    const wsProtocol = typeof window !== 'undefined' && window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsHost = typeof window !== 'undefined' ? window.location.host : 'localhost:3000';
-    const ticketQuery = ticket ? `?ticket=${encodeURIComponent(ticket)}` : '';
-    const wsUrl = `${wsProtocol}//${wsHost}/ws/v1/fittings/${jobId}${ticketQuery}`;
-
     let simTimeout1: NodeJS.Timeout;
     let simTimeout2: NodeJS.Timeout;
     let simTimeout3: NodeJS.Timeout;
     let simTimeout4: NodeJS.Timeout;
 
-    try {
-      const ws = new WebSocket(wsUrl);
-      socketRef.current = ws;
+    // Connect to WebSocket only if a dedicated WS URL is configured (e.g. production/staging or NEXT_PUBLIC_WS_URL)
+    const configuredWsBase = process.env.NEXT_PUBLIC_WS_URL;
+    if (configuredWsBase) {
+      try {
+        const ticketQuery = ticket ? `?ticket=${encodeURIComponent(ticket)}` : '';
+        const wsUrl = `${configuredWsBase}/ws/v1/fittings/${jobId}${ticketQuery}`;
+        const ws = new WebSocket(wsUrl);
+        socketRef.current = ws;
 
-      ws.onopen = () => {
-        wsConnected = true;
-        // PING keepalive per C-013
-        pingIntervalRef.current = setInterval(() => {
-          if (ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify({ event: 'PING', timestamp: Date.now() }));
-          }
-        }, 3000);
-      };
+        ws.onopen = () => {
+          wsConnected = true;
+          pingIntervalRef.current = setInterval(() => {
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ event: 'PING', timestamp: Date.now() }));
+            }
+          }, 3000);
+        };
 
-      ws.onmessage = (event) => {
-        try {
-          const payload = JSON.parse(event.data);
-          if (payload.event === 'FITTING_STATUS_UPDATE') {
-            const rawStatus = String(payload.status).toUpperCase();
-            if (rawStatus.includes('SEGMENT') || rawStatus === 'QUEUED') {
-              setCurrentStepIndex(0);
-            } else if (rawStatus.includes('DEFORM') || rawStatus.includes('DRAP')) {
-              setCurrentStepIndex(1);
-            } else if (rawStatus.includes('SYNTHESIZ') || rawStatus.includes('COMPOSIT')) {
-              setCurrentStepIndex(2);
-            }
-            if (typeof payload.progressPercent === 'number') {
-              setProgressPercent(payload.progressPercent);
-            }
-            if (payload.message) {
-              setStatusMessage(payload.message);
-            }
-          } else if (payload.event === 'FITTING_COMPLETED') {
-            setCurrentStepIndex(3);
-            setProgressPercent(100);
-            setStatusMessage('Couture composite ready.');
-            setTimeout(() => {
-              onCompleted(payload);
-            }, 600);
-          } else if (payload.event === 'FITTING_FAILED') {
-            setErrorDetails(payload.errorMessage || 'Neural fitting inference timeout.');
-            if (payload.fallbackRenderUrl) {
-              setFallbackUsed(true);
-              setStatusMessage('Switching to 3D Parametric Mannequin fallback...');
+        ws.onmessage = (event) => {
+          try {
+            const payload = JSON.parse(event.data);
+            if (payload.event === 'FITTING_STATUS_UPDATE') {
+              const rawStatus = String(payload.status).toUpperCase();
+              if (rawStatus.includes('SEGMENT') || rawStatus === 'QUEUED') {
+                setCurrentStepIndex(0);
+              } else if (rawStatus.includes('DEFORM') || rawStatus.includes('DRAP')) {
+                setCurrentStepIndex(1);
+              } else if (rawStatus.includes('SYNTHESIZ') || rawStatus.includes('COMPOSIT')) {
+                setCurrentStepIndex(2);
+              }
+              if (typeof payload.progressPercent === 'number') {
+                setProgressPercent(payload.progressPercent);
+              }
+              if (payload.message) {
+                setStatusMessage(payload.message);
+              }
+            } else if (payload.event === 'FITTING_COMPLETED') {
+              setCurrentStepIndex(3);
+              setProgressPercent(100);
+              setStatusMessage('Couture composite ready.');
               setTimeout(() => {
-                onCompleted({
-                  event: 'FITTING_COMPLETED',
-                  jobId,
-                  status: 'COMPLETED',
-                  renderUrl: payload.fallbackRenderUrl,
-                  drapeScore: 0.94,
-                  isWatermarked: false,
-                  ephemeralExpiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-                });
-              }, 1200);
-            } else {
-              onFailed?.(payload);
+                onCompleted(payload);
+              }, 600);
+            } else if (payload.event === 'FITTING_FAILED') {
+              setErrorDetails(payload.errorMessage || 'Neural fitting inference timeout.');
+              if (payload.fallbackRenderUrl) {
+                setFallbackUsed(true);
+                setStatusMessage('Switching to 3D Parametric Mannequin fallback...');
+                setTimeout(() => {
+                  onCompleted({
+                    event: 'FITTING_COMPLETED',
+                    jobId,
+                    status: 'COMPLETED',
+                    renderUrl: payload.fallbackRenderUrl,
+                    drapeScore: 0.94,
+                    isWatermarked: false,
+                    ephemeralExpiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+                  });
+                }, 1200);
+              } else {
+                onFailed?.(payload);
+              }
             }
+          } catch {
+            // Non-JSON WS frame
           }
-        } catch {
-          // Non-JSON WS frame
-        }
-      };
+        };
 
-      ws.onerror = () => {
-        // Fall back to client simulation if WebSocket endpoint is unserviced
-        startClientSimulation();
-      };
-
-      ws.onclose = () => {
-        if (!wsConnected) {
+        ws.onerror = () => {
           startClientSimulation();
-        }
-      };
-    } catch {
+        };
+
+        ws.onclose = () => {
+          if (!wsConnected) {
+            startClientSimulation();
+          }
+        };
+      } catch {
+        startClientSimulation();
+      }
+    } else {
+      // In local dev without dedicated WS server, execute realistic atelier client simulation
       startClientSimulation();
     }
 
@@ -213,7 +214,17 @@ export const FittingProgressModal: React.FC<FittingProgressModalProps> = ({
 
     return () => {
       if (socketRef.current) {
-        socketRef.current.close();
+        const ws = socketRef.current;
+        ws.onopen = null;
+        ws.onmessage = null;
+        ws.onerror = null;
+        ws.onclose = null;
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.close();
+        } else if (ws.readyState === WebSocket.CONNECTING) {
+          ws.onopen = () => ws.close();
+        }
+        socketRef.current = null;
       }
       if (timerRef.current) clearInterval(timerRef.current);
       if (pingIntervalRef.current) clearInterval(pingIntervalRef.current);
@@ -240,7 +251,7 @@ export const FittingProgressModal: React.FC<FittingProgressModalProps> = ({
         {/* Header */}
         <div className="text-center space-y-1">
           <span className="text-xs uppercase tracking-widest font-semibold text-gold font-sans">
-            Multimodal Generative Tailor (FEAT-004)
+            Atelier Generative Neural Tailoring
           </span>
           <h2
             id="fitting-progress-title"
@@ -249,7 +260,7 @@ export const FittingProgressModal: React.FC<FittingProgressModalProps> = ({
             Sculpting Your Bespoke Drape
           </h2>
           <p className="text-xs text-grey-500 font-sans">
-            Inference latency target: &lt; 4.0s (NFR-004) • Elapsed: {elapsedSeconds}s
+            Estimated Inference: &lt; 4.0s • Elapsed: {elapsedSeconds}s
           </p>
         </div>
 

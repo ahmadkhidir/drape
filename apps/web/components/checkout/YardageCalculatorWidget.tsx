@@ -155,7 +155,7 @@ export const YardageCalculatorWidget: React.FC<YardageCalculatorWidgetProps> = (
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-grey-100 gap-2">
         <div>
           <span className="text-xs uppercase tracking-widest text-accent-700 font-semibold font-mono">
-            FEAT-007 • Algorithmic Cutting Estimator
+            Bespoke Atelier • Algorithmic Cutting Estimator
           </span>
           <h3 id={`${idPrefix}-calculator-title`} className="text-xl font-display text-primary-900 font-medium">
             Yardage & Cutting Layout Calculator

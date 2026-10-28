@@ -99,7 +99,7 @@ export const EphemeralCountdown: React.FC<EphemeralCountdownProps> = ({
       <p className="text-[11px] text-grey-500 dark:text-grey-400 leading-normal">
         {isExpired
           ? 'Customer portrait assets have been cryptographically shredded from volatile memory per Illinois BIPA.'
-          : 'Per NFR-040, raw customer photos are processed in RAM-disks and permanently wiped after 15 minutes.'}
+          : 'Per Drape Biometric Privacy Policy, raw customer photos are processed in volatile RAM-disks and permanently wiped after 15 minutes.'}
       </p>
 
       {/* 2-Minute Warning Alert Toast */}
