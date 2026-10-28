@@ -1,0 +1,83 @@
+version: '3.8'
+
+# External Services Infrastructure for Local Development
+# Run: docker compose -f docker-compose.infra.yml up -d
+# Then in host terminal: pnpm dev
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: drape-dev-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-drape}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-drape}
+      POSTGRES_DB: ${POSTGRES_DB:-drape_core}
+    ports:
+      - '5432:5432'
+    volumes:
+      - dev_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U drape -d drape_core']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: drape-dev-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - dev_redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: drape-dev-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-drape}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-drape}
+      RABBITMQ_DEFAULT_VHOST: /
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - dev_rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  neural-fitting:
+    build:
+      context: ./services/neural-fitting
+      dockerfile: Dockerfile
+    container_name: drape-dev-neural-fitting
+    restart: unless-stopped
+    environment:
+      AMQP_URL: amqp://drape:drape@rabbitmq:5672/
+      ENABLE_AMQP: 'true'
+      PORT: 8000
+      HOST: '0.0.0.0'
+      MEDIA_STORAGE_PATH: /data/media
+    ports:
+      - '8000:8000'
+    volumes:
+      - shared_media:/data/media
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+volumes:
+  dev_postgres_data:
+  dev_redis_data:
+  dev_rabbitmq_data:
+  shared_media:
