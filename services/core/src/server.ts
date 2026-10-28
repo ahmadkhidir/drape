@@ -6,6 +6,7 @@
 import { fileURLToPath } from 'node:url';
 import fastify, { type FastifyInstance, type FastifyServerOptions } from 'fastify';
 import cors from '@fastify/cors';
+import multipart from '@fastify/multipart';
 import type { Redis } from 'ioredis';
 import { healthRoutes } from './routes/health.js';
 import { fabricRoutes } from './routes/fabrics.js';
@@ -41,6 +42,15 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
   await server.register(cors, {
     origin: true,
     credentials: true,
+  });
+
+  // Multipart form-data parser for photo and sketch uploads (C-011)
+  await server.register(multipart, {
+    attachFieldsToBody: 'keyValues',
+    limits: {
+      fileSize: 15 * 1024 * 1024,
+      files: 2,
+    },
   });
 
   // Register baseline health and operational routes

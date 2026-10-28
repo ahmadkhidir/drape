@@ -136,4 +136,36 @@ describe('Neural Fitting & Motion Execution End-to-End (C-011, C-012, C-014, C-0
 
     expect(res.statusCode).toBe(404);
   });
+  it('C-011: POST /api/v1/fittings accepts multipart/form-data payload and returns 202 without 415', async () => {
+    const boundary = '----WebKitFormBoundary7MA4YWxkTrZu0gW';
+    const payload = [
+      `--${boundary}`,
+      'Content-Disposition: form-data; name="fabricId"',
+      '',
+      'FAB-SLK-892',
+      `--${boundary}`,
+      'Content-Disposition: form-data; name="silhouetteId"',
+      '',
+      'corseted_mermaid_gown',
+      `--${boundary}`,
+      'Content-Disposition: form-data; name="mode"',
+      '',
+      'mannequin',
+      `--${boundary}--`,
+    ].join('\r\n');
+
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/v1/fittings',
+      headers: {
+        'content-type': `multipart/form-data; boundary=${boundary}`,
+      },
+      payload,
+    });
+
+    expect(res.statusCode).toBe(202);
+    const body = JSON.parse(res.body);
+    expect(body.jobId).toBeDefined();
+    expect(body.status).toBe('queued');
+  });
 });

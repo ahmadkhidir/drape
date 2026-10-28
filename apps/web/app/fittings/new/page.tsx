@@ -185,34 +185,50 @@ function NeuralFittingContent() {
       `guest-${Date.now()}`;
 
     try {
-      const formData = new FormData();
-      formData.append('fabricId', selectedFabricId);
-      formData.append('silhouetteId', selectedSilhouette);
-      formData.append('mode', mode);
+      let response: Response;
 
       if (mode === 'photo' && photoFile) {
+        const formData = new FormData();
+        formData.append('fabricId', selectedFabricId);
+        formData.append('silhouetteId', selectedSilhouette);
+        formData.append('mode', mode);
         formData.append('photo', photoFile);
-      } else if (mode === 'mannequin') {
-        formData.append('mannequinBodyType', mannequinBodyType);
+
+        if (customPrompt.trim().length > 0) {
+          formData.append('customPrompt', customPrompt.trim().slice(0, 500));
+        }
+
+        const headers: Record<string, string> = {
+          'x-guest-session-token': guestSessionToken,
+        };
+
+        if (consentToken) {
+          headers['X-Biometric-Consent-Token'] = consentToken;
+        }
+
+        response = await fetch('/api/v1/fittings', {
+          method: 'POST',
+          headers,
+          body: formData,
+        });
+      } else {
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+          'x-guest-session-token': guestSessionToken,
+        };
+
+        response = await fetch('/api/v1/fittings', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            fabricId: selectedFabricId,
+            silhouetteId: selectedSilhouette,
+            mode: 'mannequin',
+            mannequinBodyType,
+            customPrompt: customPrompt.trim().slice(0, 500) || undefined,
+          }),
+        });
       }
-
-      if (customPrompt.trim().length > 0) {
-        formData.append('customPrompt', customPrompt.trim().slice(0, 500));
-      }
-
-      const headers: Record<string, string> = {
-        'x-guest-session-token': guestSessionToken,
-      };
-
-      if (mode === 'photo' && consentToken) {
-        headers['X-Biometric-Consent-Token'] = consentToken;
-      }
-
-      const response = await fetch('/api/v1/fittings', {
-        method: 'POST',
-        headers,
-        body: formData,
-      });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));

@@ -60,7 +60,12 @@ export const fittingsRoutes: FastifyPluginAsync = async (fastify) => {
    */
   fastify.post('/api/v1/fittings', async (request, reply) => {
     const user = extractUser(request);
-    const body = (request.body as Record<string, any>) || {};
+    const rawBody = (request.body as Record<string, any>) || {};
+    const getVal = (val: any) => (val && typeof val === 'object' && 'value' in val ? val.value : val);
+    const body: Record<string, any> = {};
+    for (const [k, v] of Object.entries(rawBody)) {
+      body[k] = getVal(v);
+    }
 
     // In multipart or json requests:
     const parseResult = fittingPostSchema.safeParse(body);
