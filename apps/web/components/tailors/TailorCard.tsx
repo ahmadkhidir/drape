@@ -153,7 +153,7 @@ export function TailorCard({
           {/* Featured Client Review Snippet */}
           {studio.verifiedReviews && studio.verifiedReviews.length > 0 && (
             <div className="mb-4 text-xs italic text-[#B8B1A5] bg-[#1C1F26] border-l-2 border-[#C5A059] pl-3 py-1">
-              "{studio.verifiedReviews[0].comment}"
+              &ldquo;{studio.verifiedReviews[0].comment}&rdquo;
               <span className="block not-italic text-[10px] text-[#707C94] mt-0.5">
                 — {studio.verifiedReviews[0].authorName}
               </span>

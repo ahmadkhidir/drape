@@ -31,7 +31,7 @@ import {
   normalizeCityForApi,
   TailorStudioItem,
   TailorStudioDetail,
-} from '../src/components/tailors';
+} from '../components/tailors';
 
 describe('FEAT-010: Master Tailor Directory & Concierge Handoff UI', () => {
   beforeEach(() => {
