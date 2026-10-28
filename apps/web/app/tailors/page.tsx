@@ -4,6 +4,7 @@ import React, { useState, useEffect, Suspense, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { BrandLogo } from '@/components/brand/BrandLogo';
+import { SoundscapeToggle } from '@/components/audio/SoundscapeToggle';
 import {
   TailorCity,
   TailorSpecialty,
@@ -150,6 +151,7 @@ function TailorsDirectoryContent() {
           </div>
 
           <nav className="flex items-center gap-4 text-xs font-medium">
+            <SoundscapeToggle />
             <Link
               href="/catalog"
               className="text-[#C9D0DD] hover:text-[#C5A059] transition-colors"

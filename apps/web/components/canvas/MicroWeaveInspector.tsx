@@ -488,7 +488,7 @@ export function MicroWeaveInspector({
               data-testid="tile-loading-indicator"
             >
               <span className="w-2 h-2 rounded-full bg-gold animate-ping" />
-              <span>Streaming C-010 Pyramidal Tiles...</span>
+              <span>Streaming Micro-Weave Tiles...</span>
             </div>
           )}
 

@@ -14,6 +14,7 @@ import { FabricGrid } from '../../components/catalog/FabricGrid';
 import { FilterSidebar } from '../../components/catalog/FilterSidebar';
 import { FilterDrawer } from '../../components/catalog/FilterDrawer';
 import { BrandLogo } from '../../components/brand/BrandLogo';
+import { SoundscapeToggle } from '../../components/audio/SoundscapeToggle';
 
 const INITIAL_FILTERS: CatalogFilterState = {
   searchQuery: '',
@@ -177,6 +178,7 @@ export default function FabricCatalogPage() {
 
           {/* Header Actions */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <SoundscapeToggle />
             <button
               type="button"
               onClick={() => setIsDrawerOpen(true)}

@@ -48,7 +48,7 @@ function createDefaultFittingRecord(
     mode: 'photo',
     status: 'completed',
     renderUrl:
-      'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200"><defs><linearGradient id="silkGlow" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%231c1f26"/><stop offset="50%" stop-color="%23282d37"/><stop offset="100%" stop-color="%23111318"/></linearGradient><linearGradient id="goldRibbon" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="%238c7136"/><stop offset="50%" stop-color="%23c5a059"/><stop offset="100%" stop-color="%23e0c792"/></linearGradient></defs><rect width="100%" height="100%" fill="url(%23silkGlow)"/><ellipse cx="450" cy="1120" rx="360" ry="40" fill="%23000" opacity="0.6"/><path d="M450 160 C410 160, 360 250, 350 360 C340 470, 390 560, 380 660 C360 780, 240 960, 200 1100 L700 1100 C660 960, 540 780, 520 660 C510 560, 560 470, 550 360 C540 250, 490 160, 450 160 Z" fill="url(%23goldRibbon)" opacity="0.95" stroke="%23f9f4ea" stroke-width="2"/><text x="450" y="80" text-anchor="middle" fill="%23fbf9f5" font-family="serif" font-size="34" letter-spacing="4">DRAPE COUTURE COMPOSITE</text><text x="450" y="1150" text-anchor="middle" fill="%23c5a059" font-family="monospace" font-size="16" letter-spacing="2">4K PHOTOREALISTIC INFERENCE ? NFR-030 APPROVED</text></svg>',
+      'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200"><defs><linearGradient id="silkGlow" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%231c1f26"/><stop offset="50%" stop-color="%23282d37"/><stop offset="100%" stop-color="%23111318"/></linearGradient><linearGradient id="goldRibbon" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="%238c7136"/><stop offset="50%" stop-color="%23c5a059"/><stop offset="100%" stop-color="%23e0c792"/></linearGradient></defs><rect width="100%" height="100%" fill="url(%23silkGlow)"/><ellipse cx="450" cy="1120" rx="360" ry="40" fill="%23000" opacity="0.6"/><path d="M450 160 C410 160, 360 250, 350 360 C340 470, 390 560, 380 660 C360 780, 240 960, 200 1100 L700 1100 C660 960, 540 780, 520 660 C510 560, 560 470, 550 360 C540 250, 490 160, 450 160 Z" fill="url(%23goldRibbon)" opacity="0.95" stroke="%23f9f4ea" stroke-width="2"/><text x="450" y="80" text-anchor="middle" fill="%23fbf9f5" font-family="serif" font-size="34" letter-spacing="4">DRAPE COUTURE COMPOSITE</text><text x="450" y="1150" text-anchor="middle" fill="%23c5a059" font-family="monospace" font-size="16" letter-spacing="2">DRAPE HAUTE COUTURE ATELIER</text></svg>',
     motionVideoUrl: null,
     isWatermarked: false,
     drapeScore: parsedDrapeScore,
@@ -147,7 +147,7 @@ export function FittingResultsViewContent({
           mode: 'photo',
           status: 'completed',
           renderUrl:
-            'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200"><defs><linearGradient id="silkGlow" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%231c1f26"/><stop offset="50%" stop-color="%23282d37"/><stop offset="100%" stop-color="%23111318"/></linearGradient><linearGradient id="goldRibbon" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="%238c7136"/><stop offset="50%" stop-color="%23c5a059"/><stop offset="100%" stop-color="%23e0c792"/></linearGradient></defs><rect width="100%" height="100%" fill="url(%23silkGlow)"/><ellipse cx="450" cy="1120" rx="360" ry="40" fill="%23000" opacity="0.6"/><path d="M450 160 C410 160, 360 250, 350 360 C340 470, 390 560, 380 660 C360 780, 240 960, 200 1100 L700 1100 C660 960, 540 780, 520 660 C510 560, 560 470, 550 360 C540 250, 490 160, 450 160 Z" fill="url(%23goldRibbon)" opacity="0.95" stroke="%23f9f4ea" stroke-width="2"/><text x="450" y="80" text-anchor="middle" fill="%23fbf9f5" font-family="serif" font-size="34" letter-spacing="4">DRAPE COUTURE COMPOSITE</text><text x="450" y="1150" text-anchor="middle" fill="%23c5a059" font-family="monospace" font-size="16" letter-spacing="2">4K PHOTOREALISTIC INFERENCE ? NFR-030 APPROVED</text></svg>',
+            'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200"><defs><linearGradient id="silkGlow" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%231c1f26"/><stop offset="50%" stop-color="%23282d37"/><stop offset="100%" stop-color="%23111318"/></linearGradient><linearGradient id="goldRibbon" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="%238c7136"/><stop offset="50%" stop-color="%23c5a059"/><stop offset="100%" stop-color="%23e0c792"/></linearGradient></defs><rect width="100%" height="100%" fill="url(%23silkGlow)"/><ellipse cx="450" cy="1120" rx="360" ry="40" fill="%23000" opacity="0.6"/><path d="M450 160 C410 160, 360 250, 350 360 C340 470, 390 560, 380 660 C360 780, 240 960, 200 1100 L700 1100 C660 960, 540 780, 520 660 C510 560, 560 470, 550 360 C540 250, 490 160, 450 160 Z" fill="url(%23goldRibbon)" opacity="0.95" stroke="%23f9f4ea" stroke-width="2"/><text x="450" y="80" text-anchor="middle" fill="%23fbf9f5" font-family="serif" font-size="34" letter-spacing="4">DRAPE COUTURE COMPOSITE</text><text x="450" y="1150" text-anchor="middle" fill="%23c5a059" font-family="monospace" font-size="16" letter-spacing="2">DRAPE HAUTE COUTURE ATELIER</text></svg>',
           motionVideoUrl: null,
           isWatermarked: false,
           drapeScore: parsedDrapeScore,
@@ -211,7 +211,7 @@ export function FittingResultsViewContent({
           <p className="font-display text-lg text-ink dark:text-alabaster">
             Loading Bespoke Fitting Presentation...
           </p>
-          <p className="font-mono text-xs text-grey-500">Retrieving C-012 Session Artifacts</p>
+          <p className="font-mono text-xs text-grey-500">Synthesizing Anatomical Drape Composite...</p>
         </div>
       </div>
     );
@@ -257,7 +257,7 @@ export function FittingResultsViewContent({
           <div>
             <div className="inline-flex items-center space-x-2 text-xs font-semibold uppercase tracking-widest text-gold font-sans mb-1">
               <span className="h-px w-6 bg-gold" />
-              <span>Screen 05 • Fitting Results View</span>
+              <span>Haute Couture Fitting Showcase</span>
             </div>
             <h1 className="font-display text-3xl sm:text-4xl font-semibold text-ink dark:text-alabaster tracking-tight">
               {fitting.silhouetteName || 'Bespoke Garment Drape'}

@@ -167,7 +167,7 @@ describe('FEAT-006: MotionPlayer Component Rendering & States', () => {
     expect(html).toContain('playsInline=""');
 
     // Compass and HUD
-    expect(html).toContain('360° Catwalk Motion • FEAT-006');
+    expect(html).toContain('360° Catwalk Motion • Neural Runway');
     expect(html).toContain('0°');
     expect(html).toContain('Frame 1/120');
 
@@ -218,7 +218,7 @@ describe('Screen 5: Fitting Results View Integration (/fittings/:id)', () => {
   it('renders editorial studio layout with silhouette title and fabric badge', () => {
     const html = renderToStaticMarkup(<FittingResultsViewContent fittingId={mockFittingId} />);
 
-    expect(html).toContain('Screen 05 • Fitting Results View');
+    expect(html).toContain('Haute Couture Fitting Showcase');
     expect(html).toContain('Corseted Mermaid Gown');
     expect(html).toContain('Como Silk Brocade');
     expect(html).toContain('FAB-SLK-892');

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { BrandLogo } from '@/components/brand/BrandLogo';
+import { SoundscapeToggle } from '@/components/audio/SoundscapeToggle';
 import {
   WardrobeTabs,
   WardrobeTabType,
@@ -92,6 +93,7 @@ export default function DigitalWardrobePage() {
           </div>
 
           <div className="flex items-center space-x-3 sm:space-x-4">
+            <SoundscapeToggle />
             <button
               type="button"
               onClick={handleToggleGuestMode}
@@ -329,12 +331,12 @@ export default function DigitalWardrobePage() {
             <BrandLogo variant="wordmark" size="sm" asLink={false} />
             <span>— Haute Couture Digital Vault & Tailor Specification Handoff</span>
           </div>
-          <div className="flex items-center space-x-4 font-mono">
-            <span>C-017</span>
-            <span>C-018</span>
-            <span>C-028</span>
-            <span>C-029</span>
-            <span>EVT-013</span>
+          <div className="flex items-center space-x-3 text-xs text-stone-400">
+            <span>Archival Precision</span>
+            <span>•</span>
+            <span>Accredited Ateliers</span>
+            <span>•</span>
+            <span>Certified Provenance</span>
           </div>
         </div>
       </footer>
