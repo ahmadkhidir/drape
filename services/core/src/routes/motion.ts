@@ -70,6 +70,11 @@ function extractUserOrGuestId(request: { headers: Record<string, string | string
     return guestHeader.trim();
   }
 
+  // In non-test development mode, allow guest exploration fallback
+  if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
+    return '11111111-1111-4111-a111-111111111111';
+  }
+
   return null;
 }
 
