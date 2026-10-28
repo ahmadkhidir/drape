@@ -196,8 +196,8 @@ export function ClothSandbox({
       physicsMatrix: {
         massDensity: gsm / 1000,
         bendingStiffness: stiffnessRating,
-        tensileElasticity: 0.88,
-        airDamping: 0.05,
+        tensileElasticity: 0.98,
+        airDamping: 0.06,
         gravityVector: [0, -9.8, 0],
         ...physicsMatrix,
       },
@@ -246,7 +246,7 @@ export function ClothSandbox({
     lastPointerPosRef.current = { x, y };
 
     if (engineRef.current) {
-      engineRef.current.grab(x, y, 0.6);
+      engineRef.current.grab(x, y, 0.42);
     }
   };
 
@@ -259,14 +259,14 @@ export function ClothSandbox({
     const dx = x - lastX;
     const dy = y - lastY;
 
-    // Direct drag manipulation
-    engineRef.current.drag(x, y, 0.2);
+    // Direct drag manipulation of soft pinch patch
+    engineRef.current.drag(x, y, 0.15);
 
-    // Dynamic wave/ripple generation from pointer velocity
+    // Subtle gentle wave when moving quickly (not excessive rubber shockwaves)
     const speed = Math.sqrt(dx * dx + dy * dy);
-    if (speed > 0.02) {
-      const impulseScale = Math.min(speed * 8.0, 3.5);
-      engineRef.current.applyRipple(x, y, dx * impulseScale, dy * impulseScale, 0.5, 0.75);
+    if (speed > 0.06) {
+      const impulseScale = Math.min(speed * 1.5, 0.8);
+      engineRef.current.applyRipple(x, y, dx * impulseScale, dy * impulseScale, 0.2, 0.5);
     }
 
     lastPointerPosRef.current = { x, y };
