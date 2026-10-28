@@ -127,7 +127,7 @@ describe('FEAT-002: Verlet Cloth Physics Engine', () => {
     expect(engine.positions[draggedP + 1]).toBeLessThan(0.5);
   });
 
-  it('switches gravity presets: breeze, drape, and drop', () => {
+  it('switches gravity presets: breeze and drape', () => {
     const engine = new VerletClothEngine({
       gridX: 8,
       gridY: 8,
@@ -290,6 +290,36 @@ describe('FEAT-003 & C-010: Micro-Weave Inspector & Pyramidal Deep-Zoom Tile Geo
     expect(overhead.z).toBeCloseTo(1.0, 2);
     expect(overhead.x).toBeCloseTo(0, 2);
     expect(overhead.y).toBeCloseTo(0, 2);
+  });
+
+  it('maps distinct certified textile colors and textures for Ivory Satin, Obsidian Velvet, and Charcoal Wool', () => {
+    // Ivory Duchesse Satin
+    const ivoryColor = getFabricColorAndShine('Luminous Ivory Duchesse');
+    const ivoryTexture = getFabricTextureUrl('FAB-SLK-401');
+    expect(ivoryTexture).toBe('/textures/fabrics/ivory-satin.svg');
+    expect(ivoryColor.color).toBe(0xf5f1e8);
+    expect(ivoryColor.roughness).toBeLessThan(0.35); // High luster satin
+
+    // Midnight Noir Silk Velvet
+    const velvetColor = getFabricColorAndShine('Midnight Noir Silk Velvet');
+    const velvetTexture = getFabricTextureUrl('FAB-VLV-730');
+    expect(velvetTexture).toBe('/textures/fabrics/obsidian-velvet.svg');
+    expect(velvetColor.color).toBe(0x1a1c22); // Deep obsidian noir
+    expect(velvetColor.roughness).toBeGreaterThan(0.5); // High absorption tufted pile
+
+    // Charcoal Fine Wool Crepe
+    const woolColor = getFabricColorAndShine('Charcoal Fine Wool Crepe');
+    const woolTexture = getFabricTextureUrl('FAB-WOL-205');
+    expect(woolTexture).toBe('/textures/fabrics/charcoal-wool.svg');
+    expect(woolColor.color).toBe(0x32343a); // Tailoring charcoal
+  });
+
+  it('constructs dynamic microWeaveTileBaseUrl per fabric ID', () => {
+    const fabrics = ['FAB-SLK-401', 'FAB-VLV-730', 'FAB-WOL-205', 'FAB-SLK-892'];
+    for (const fId of fabrics) {
+      const url = `/api/v1/fabrics/${fId}/micro-weave/tiles`;
+      expect(url).toBe(`/api/v1/fabrics/${fId}/micro-weave/tiles`);
+    }
   });
 });
 

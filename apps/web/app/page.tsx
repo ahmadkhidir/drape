@@ -20,16 +20,18 @@ interface FabricItem {
   stiffnessRating: number;
   pricePerYard: number;
   description: string;
+  textureUrl: string;
+  weaveType: string;
 }
 
 const FEATURED_BOLTS: FabricItem[] = [
   {
     id: 'DR-SLK-01',
-    sku: 'FAB-SLK-892',
+    sku: 'FAB-SLK-401',
     name: 'Luminous Ivory Duchesse',
-    millName: 'Tessitura di Como',
+    millName: 'Taroni Seta',
     origin: 'Como, Italy',
-    fiberBreakdown: '100% Mulberry Silk',
+    fiberBreakdown: '100% Silk Duchesse',
     threadCount: '480 TPI (280 Warp / 200 Weft)',
     gsm: 280,
     widthInches: 54,
@@ -37,10 +39,12 @@ const FEATURED_BOLTS: FabricItem[] = [
     stiffnessRating: 6.8,
     pricePerYard: 145,
     description: 'Heavyweight satin with high bending stiffness, sculpted architectural drape, and lustrous sheen.',
+    textureUrl: '/textures/fabrics/ivory-satin.svg',
+    weaveType: 'Duchesse Satin Weave',
   },
   {
     id: 'DR-VLV-04',
-    sku: 'FAB-VLV-104',
+    sku: 'FAB-VLV-730',
     name: 'Midnight Noir Silk Velvet',
     millName: 'Atelier de Soierie Lyonnaise',
     origin: 'Lyon, France',
@@ -52,10 +56,12 @@ const FEATURED_BOLTS: FabricItem[] = [
     stiffnessRating: 2.1,
     pricePerYard: 180,
     description: 'Dense directional tufted pile with anisotropic light absorption and fluid cascading folds.',
+    textureUrl: '/textures/fabrics/obsidian-velvet.svg',
+    weaveType: 'Tufted Cut-Pile Velvet Weave',
   },
   {
     id: 'DR-WOL-02',
-    sku: 'FAB-WOL-450',
+    sku: 'FAB-WOL-205',
     name: 'Charcoal Fine Wool Crepe',
     millName: 'Lanificio di Biella',
     origin: 'Biella, Italy',
@@ -67,6 +73,8 @@ const FEATURED_BOLTS: FabricItem[] = [
     stiffnessRating: 4.5,
     pricePerYard: 120,
     description: 'High-twist wool yarn providing crisp tailoring resilience, organic drape recovery, and breathable wear.',
+    textureUrl: '/textures/fabrics/charcoal-wool.svg',
+    weaveType: 'High-Twist Wool Crepe Weave',
   },
 ];
 
@@ -184,9 +192,10 @@ export default function AtelierHomePage() {
                 <ClothSandbox
                   fabricId={activeFabric.sku}
                   fabricName={activeFabric.name}
+                  textureUrl={activeFabric.textureUrl}
                   gsm={activeFabric.gsm}
                   composition={activeFabric.fiberBreakdown}
-                  weaveType="Duchesse Satin Weave"
+                  weaveType={activeFabric.weaveType}
                   drapeCoefficient={activeFabric.drapeCoefficient}
                   stiffnessRating={activeFabric.stiffnessRating}
                   onInspectWeave={() => handleOpenMicroWeave(activeFabric)}
@@ -300,6 +309,8 @@ export default function AtelierHomePage() {
         fiberBreakdown={inspectingFabric.fiberBreakdown}
         threadCount={inspectingFabric.threadCount}
         gsm={inspectingFabric.gsm}
+        textureUrl={inspectingFabric.textureUrl}
+        weaveType={inspectingFabric.weaveType}
       />
     </div>
   );
