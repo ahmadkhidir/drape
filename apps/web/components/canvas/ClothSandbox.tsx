@@ -178,8 +178,6 @@ export function ClothSandbox({
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const clothMeshRef = useRef<THREE.Mesh | null>(null);
   const activeTextureRef = useRef<THREE.Texture | null>(null);
-  const propsRef = useRef({ fabricId, fabricName, textureUrl, weaveType, applyFabricMaterial });
-  propsRef.current = { fabricId, fabricName, textureUrl, weaveType, applyFabricMaterial };
   const isPointerDownRef = useRef<boolean>(false);
   const lastPointerPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
@@ -330,6 +328,9 @@ export function ClothSandbox({
       mat.needsUpdate = true;
     }
   }, [shaderAssets]);
+
+  const propsRef = useRef({ fabricId, fabricName, textureUrl, weaveType, applyFabricMaterial });
+  propsRef.current = { fabricId, fabricName, textureUrl, weaveType, applyFabricMaterial };
 
   // Dynamic material pattern and color update when active fabric prop updates
   useEffect(() => {
