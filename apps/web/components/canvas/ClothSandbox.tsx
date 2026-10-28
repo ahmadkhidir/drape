@@ -12,6 +12,9 @@ import {
 } from './types';
 import { VerletClothEngine } from './clothPhysics';
 import { detectGraphicsCapabilities } from './ClothSandboxBoot';
+import { MicroWeaveInspector } from './MicroWeaveInspector';
+export { getFabricColorAndShine, getFabricTextureUrl } from './fabricVisuals';
+import { getFabricColorAndShine, getFabricTextureUrl } from './fabricVisuals';
 
 export interface ClothSandboxProps {
   fabricId?: string;
@@ -28,69 +31,6 @@ export interface ClothSandboxProps {
   className?: string;
 }
 
-
-export function getFabricColorAndShine(nameOrId: string = ''): { color: number; roughness: number; metalness: number } {
-  const lower = nameOrId.toLowerCase();
-  if (lower.includes('ivory') || lower.includes('duchesse') || lower.includes('slk-01') || lower.includes('slk-401')) {
-    return { color: 0xf5f1e8, roughness: 0.26, metalness: 0.12 }; // Luminous Warm Ivory Duchesse Satin
-  }
-  if (lower.includes('velvet') || lower.includes('vlv')) {
-    return { color: 0x1a1c22, roughness: 0.65, metalness: 0.08 }; // Deep Midnight Noir Velvet
-  }
-  if (lower.includes('wool') || lower.includes('crepe') || lower.includes('wol')) {
-    return { color: 0x32343a, roughness: 0.58, metalness: 0.05 }; // Tailoring Charcoal Wool Crepe
-  }
-  if (lower.includes('emerald') || lower.includes('brocade')) {
-    return { color: 0x1b4332, roughness: 0.32, metalness: 0.22 }; // Rich Emerald Silk Brocade
-  }
-  if (lower.includes('linen') || lower.includes('lin')) {
-    return { color: 0xe6e0d5, roughness: 0.72, metalness: 0.02 }; // Natural Oatmeal Flax Linen
-  }
-  if (lower.includes('cashmere') || lower.includes('csh') || lower.includes('camel')) {
-    return { color: 0xc49a6c, roughness: 0.68, metalness: 0.05 }; // Rich Camel Cashmere
-  }
-  return { color: 0xf2ede4, roughness: 0.32, metalness: 0.15 }; // Default luminous luxury textile
-}
-export function getFabricTextureUrl(nameOrId: string = ''): string | null {
-  const lower = nameOrId.toLowerCase();
-  if (lower.includes('slk-892') || lower.includes('silk-jacquard') || lower.includes('jacquard')) {
-    return '/textures/fabrics/silk-jacquard.svg';
-  }
-  if (lower.includes('slk-401') || lower.includes('ivory-satin') || lower.includes('duchesse')) {
-    return '/textures/fabrics/ivory-satin.svg';
-  }
-  if (lower.includes('wol-205') || lower.includes('charcoal-wool') || (lower.includes('wool') && lower.includes('crepe'))) {
-    return '/textures/fabrics/charcoal-wool.svg';
-  }
-  if (lower.includes('vlv-730') || lower.includes('obsidian-velvet') || lower.includes('velvet')) {
-    return '/textures/fabrics/obsidian-velvet.svg';
-  }
-  if (lower.includes('lin-112') || lower.includes('heritage-linen') || (lower.includes('flax') && lower.includes('linen'))) {
-    return '/textures/fabrics/heritage-linen.svg';
-  }
-  if (lower.includes('brc-608') || lower.includes('venetian-brocade') || lower.includes('venetian')) {
-    return '/textures/fabrics/venetian-brocade.svg';
-  }
-  if (lower.includes('slk-120') || lower.includes('champagne-cupro') || lower.includes('cupro')) {
-    return '/textures/fabrics/champagne-cupro.svg';
-  }
-  if (lower.includes('wol-340') || lower.includes('wool-twill') || lower.includes('twill')) {
-    return '/textures/fabrics/wool-twill.svg';
-  }
-  if (lower.includes('csh-502') || lower.includes('camel-cashmere') || lower.includes('cashmere') || lower.includes('camel')) {
-    return '/textures/fabrics/camel-cashmere.svg';
-  }
-  if (lower.includes('chf-015') || lower.includes('silk-chiffon') || lower.includes('chiffon')) {
-    return '/textures/fabrics/silk-chiffon.svg';
-  }
-  if (lower.includes('brc-905') || lower.includes('gold-brocade') || lower.includes('brocade')) {
-    return '/textures/fabrics/gold-brocade.svg';
-  }
-  if (lower.includes('lin-404') || lower.includes('raw-linen') || lower.includes('linen')) {
-    return '/textures/fabrics/raw-linen.svg';
-  }
-  return null;
-}
 
 
 export function createProceduralWeaveTexture(weaveType: string = 'satin'): { normalMap: THREE.CanvasTexture | null; bumpMap: THREE.CanvasTexture | null } {
@@ -169,6 +109,16 @@ export function ClothSandbox({
   const [statusMessage, setStatusMessage] = useState<string>('Initializing digital atelier canvas...');
   const [gravityPreset, setGravityPresetState] = useState<GravityPreset>('drape');
   const [fps, setFps] = useState<number>(60);
+  const [viewMode, setViewMode] = useState<'live' | 'macroweave'>('live');
+  const [internalInspectOpen, setInternalInspectOpen] = useState<boolean>(false);
+
+  const handleInspectClick = useCallback(() => {
+    if (onInspectWeave) {
+      onInspectWeave();
+    } else {
+      setInternalInspectOpen(true);
+    }
+  }, [onInspectWeave]);
 
   // Simulation references (held outside React state to avoid UI re-renders on hot ticks)
   const engineRef = useRef<VerletClothEngine | null>(null);
@@ -661,78 +611,102 @@ export function ClothSandbox({
         </div>
       )}
 
-      {/* Top Left Status & Tier Badges */}
-      <div className="absolute top-4 left-4 z-10 flex flex-wrap items-center gap-2">
-        <span
-          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium tracking-wide bg-ink/90 text-alabaster border border-gold/30 backdrop-blur-sm"
-          data-testid="tier-badge"
+      {/* Top Left View Mode Switcher {LIVE, MACROWEAVE, INSPECT} */}
+      <div
+        className="absolute top-4 left-4 z-20 flex items-center space-x-1 p-1 rounded-md bg-obsidian/85 backdrop-blur-md border border-grey-700/80 shadow-md"
+        data-testid="viewmode-switcher"
+      >
+        <button
+          type="button"
+          onClick={() => setViewMode('live')}
+          className={`flex items-center px-3 py-1 rounded text-[11px] font-sans uppercase tracking-wider font-semibold transition-all ${
+            viewMode === 'live'
+              ? 'bg-gold text-obsidian shadow-sm'
+              : 'text-alabaster hover:text-gold'
+          }`}
+          data-testid="tab-3d"
         >
           <span
-            className={`w-2 h-2 rounded-full mr-2 ${
-              tier === 'webgpu'
-                ? 'bg-emerald-400 animate-pulse'
-                : tier === 'webgl2'
-                ? 'bg-amber-400'
-                : tier === 'booting'
-                ? 'bg-grey-400 animate-ping'
-                : 'bg-gold'
+            className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+              viewMode === 'live' ? 'bg-emerald-400 animate-pulse' : 'bg-emerald-400/50'
             }`}
           />
-          {tier === 'webgpu'
-            ? 'WebGPU Acceleration'
-            : tier === 'webgl2'
-            ? 'WebGL 2.0 Fallback'
-            : tier === 'booting'
-            ? 'Calibrating...'
-            : 'Editorial Media'}
-        </span>
+          LIVE
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setViewMode('macroweave')}
+          className={`px-3 py-1 rounded text-[11px] font-sans uppercase tracking-wider font-semibold transition-all ${
+            viewMode === 'macroweave'
+              ? 'bg-gold text-obsidian shadow-sm'
+              : 'text-alabaster hover:text-gold'
+          }`}
+          data-testid="tab-macro"
+        >
+          MACROWEAVE
+        </button>
+
+        <button
+          type="button"
+          onClick={handleInspectClick}
+          className="flex items-center px-3 py-1 rounded text-[11px] font-sans uppercase tracking-wider font-semibold text-alabaster hover:text-gold transition-all"
+          data-testid="tab-inspect"
+        >
+          <svg
+            className="w-3 h-3 mr-1 text-gold"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
+            />
+          </svg>
+          INSPECT
+        </button>
 
         {status === 'context-lost' && (
           <span
-            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-semantic-error-900 text-alabaster border border-semantic-error-500"
+            className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-semantic-error-900 text-alabaster border border-semantic-error-500 ml-1"
             data-testid="context-lost-badge"
           >
-            Context Lost · Recovering
-          </span>
-        )}
-
-        {status === 'ready' && tier !== 'fallback-media' && (
-          <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono bg-grey-900/60 text-grey-300 border border-grey-700/50">
-            {fps} FPS
+            Context Lost
           </span>
         )}
       </div>
 
-      {/* Top Right Tactile Action Controls */}
-      <div className="absolute top-4 right-4 z-10 flex items-center space-x-2">
-        {onInspectWeave && (
-          <button
-            type="button"
-            onClick={onInspectWeave}
-            className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wider text-alabaster bg-ink/90 hover:bg-ink dark:bg-alabaster/90 dark:text-ink dark:hover:bg-alabaster border border-gold/40 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-gold"
-            aria-label="Launch 10x Microscopic Weave Inspector"
-            data-testid="inspect-weave-button"
-          >
-            <svg
-              className="w-3.5 h-3.5 mr-1.5 text-gold"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
-              />
-            </svg>
-            Inspect Weave (10x)
-          </button>
-        )}
-      </div>
+      {/* Top Right is purposefully empty per luxury HUD specification */}
+
+      {/* High-Resolution Photometric Macro Weave View */}
+      {viewMode === 'macroweave' && (
+        <div
+          className="absolute inset-0 z-[5] bg-cover bg-center flex items-end p-6 select-none"
+          style={{
+            backgroundImage: `url('${textureUrl || getFabricTextureUrl(fabricId)}'), radial-gradient(circle, #282D37 0%, #11100F 100%)`,
+            backgroundColor: '#1E2229',
+          }}
+          role="img"
+          aria-label={`${fabricName} high-resolution macro weave view`}
+          data-testid="macroweave-surface"
+        >
+          <div className="p-4 rounded-md bg-obsidian/85 backdrop-blur-md border border-grey-700 text-alabaster max-w-sm space-y-1 shadow-lg">
+            <span className="text-[10px] font-mono text-gold uppercase tracking-widest block font-semibold">
+              Photometric Macro Weave View
+            </span>
+            <p className="text-xs font-sans leading-relaxed text-grey-300">
+              Inspecting {fabricName} selvage density, thread count, and raking light luster across {composition || weaveType} weave structure ({gsm} GSM).
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Bottom Center Gravity Mode Presets (FEAT-002 & Screen 3) */}
-      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex items-center space-x-1 p-1 rounded-full bg-ink/80 dark:bg-obsidian/80 backdrop-blur-md border border-grey-300/30 dark:border-grey-700/50 shadow-md">
+      {viewMode === 'live' && (
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex items-center space-x-1 p-1 rounded-full bg-ink/80 dark:bg-obsidian/80 backdrop-blur-md border border-grey-300/30 dark:border-grey-700/50 shadow-md">
         {(['breeze', 'drape'] as GravityPreset[]).map((preset) => (
           <button
             key={preset}
@@ -750,9 +724,24 @@ export function ClothSandbox({
           </button>
         ))}
       </div>
+      )}
+
+{/* 10x Optical Micro-Weave Inspector Modal Fallback */}
+      {internalInspectOpen && (
+        <MicroWeaveInspector
+          isOpen={internalInspectOpen}
+          onClose={() => setInternalInspectOpen(false)}
+          fabricId={fabricId}
+          fabricName={fabricName}
+          weaveType={weaveType}
+          gsm={gsm}
+          fiberBreakdown={composition}
+          textureUrl={textureUrl || (fabricId ? getFabricTextureUrl(fabricId) || undefined : undefined)}
+        />
+      )}
 
       {/* Bottom Physical Provenance Bar */}
-      <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between p-2.5 rounded-md bg-alabaster/90 dark:bg-obsidian/90 backdrop-blur-md border border-grey-300 dark:border-grey-700 text-xs">
+      <div className="absolute bottom-2 left-4 right-4 z-10 flex items-center justify-between p-2.5 rounded-md bg-alabaster/90 dark:bg-obsidian/90 backdrop-blur-md border border-grey-300 dark:border-grey-700 text-xs">
         <div>
           <span className="font-semibold text-ink dark:text-alabaster block">{fabricName}</span>
           <span className="text-grey-600 dark:text-grey-400">
