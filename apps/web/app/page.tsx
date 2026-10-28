@@ -247,18 +247,44 @@ export default function AtelierHomePage() {
                 }`}
                 onClick={() => setActiveFabric(fabric)}
               >
-                <div className="h-44 rounded-md bg-gradient-to-br from-amber-50 to-amber-100 dark:from-neutral-900 dark:to-obsidian border border-grey-300/40 dark:border-grey-800 flex items-center justify-center mb-6 relative overflow-hidden">
-                  <span className="font-display text-lg italic text-ink dark:text-alabaster">
-                    {fabric.name}
-                  </span>
-                  <div className="absolute bottom-2 right-2 flex space-x-1">
+                <div
+                  className="h-48 rounded-md border border-grey-300/50 dark:border-grey-800 mb-6 relative overflow-hidden bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.02]"
+                  style={{
+                    backgroundImage: `radial-gradient(ellipse at top right, rgba(197,160,89,0.22), transparent 70%), url('${fabric.textureUrl}')`,
+                    backgroundColor: '#1E2229',
+                  }}
+                  role="img"
+                  aria-label={`${fabric.name} authentic fabric swatch texture`}
+                  data-testid={`swatch-preview-${fabric.sku}`}
+                >
+                  {/* Tactile Raking Light & Vignette Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-obsidian/75 via-transparent to-black/15 pointer-events-none" />
+
+                  {/* Active in 3D Canvas Pill */}
+                  {activeFabric.id === fabric.id && (
+                    <div className="absolute top-2.5 left-2.5 flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-obsidian/90 backdrop-blur-md border border-gold/60 text-gold text-[10px] uppercase tracking-wider font-semibold shadow-sm pointer-events-none">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span>Active in 3D</span>
+                    </div>
+                  )}
+
+                  {/* Corner Swatch Actions */}
+                  <div className="absolute bottom-2.5 right-2.5 flex items-center space-x-2">
+                    <Link
+                      href={`/fabric/${fabric.sku}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="px-2.5 py-1 rounded bg-obsidian/80 hover:bg-ink text-alabaster hover:text-gold text-[10px] uppercase font-semibold tracking-wider transition-colors shadow-sm border border-grey-700 hover:border-gold"
+                      aria-label={`View atelier dossier for ${fabric.name}`}
+                    >
+                      Dossier →
+                    </Link>
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleOpenMicroWeave(fabric);
                       }}
-                      className="px-2 py-1 rounded bg-obsidian/80 hover:bg-gold hover:text-ink text-alabaster text-[10px] uppercase font-semibold tracking-wider transition-colors shadow-sm"
+                      className="px-2.5 py-1 rounded bg-obsidian/85 hover:bg-gold hover:text-ink text-alabaster text-[10px] uppercase font-semibold tracking-wider transition-colors shadow-sm border border-gold/40"
                       aria-label={`Inspect weave for ${fabric.name}`}
                     >
                       10x Weave
@@ -267,7 +293,7 @@ export default function AtelierHomePage() {
                 </div>
 
                 <span className="text-[10px] uppercase font-bold tracking-widest text-gold block mb-1">
-                  {fabric.origin} · SKU {fabric.id}
+                  {fabric.origin} · SKU {fabric.sku}
                 </span>
                 <h3 className="font-display text-xl font-semibold text-ink dark:text-alabaster mb-2">
                   {fabric.name}

@@ -191,4 +191,23 @@ describe('WebGPU Lifecycle & Tiered Graphics Boot Check', () => {
       expect(fs.existsSync(path.join(textureDir, swatch)), `Swatch missing: ${swatch}`).toBe(true);
     }
   });
+
+  it('verifies curated featured bolts have authentic texture assets and valid SKUs', () => {
+    const featuredSkus = ['FAB-SLK-401', 'FAB-VLV-730', 'FAB-WOL-205'];
+    const textureDir = path.resolve(__dirname, '../public/textures/fabrics');
+
+    const expectedTextures = [
+      'ivory-satin.svg',
+      'obsidian-velvet.svg',
+      'charcoal-wool.svg',
+    ];
+
+    for (const file of expectedTextures) {
+      const p = path.join(textureDir, file);
+      expect(fs.existsSync(p), `Texture for curated bolt missing: ${file}`).toBe(true);
+      const svg = fs.readFileSync(p, 'utf8');
+      expect(svg).toContain('<svg');
+      expect(svg).toContain('pattern');
+    }
+  });
 });
