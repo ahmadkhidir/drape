@@ -68,6 +68,9 @@ export class VerletClothEngine {
   public readonly grabbedClusterOffsetsX: Float32Array;
   public readonly grabbedClusterOffsetsY: Float32Array;
   public readonly grabbedClusterOffsetsZ: Float32Array;
+  // Anchor distance matrices for taut inextensibility clamping
+  public readonly minAnchorDist: Float32Array;
+  public readonly nearestAnchorIdx: Int32Array;
 
   private gravityPreset: GravityPreset = 'drape';
   private elapsedTime: number = 0;
@@ -103,6 +106,8 @@ export class VerletClothEngine {
     this.grabbedClusterOffsetsX = new Float32Array(this.maxGrabbedCluster);
     this.grabbedClusterOffsetsY = new Float32Array(this.maxGrabbedCluster);
     this.grabbedClusterOffsetsZ = new Float32Array(this.maxGrabbedCluster);
+    this.minAnchorDist = new Float32Array(this.particleCount);
+    this.nearestAnchorIdx = new Int32Array(this.particleCount);
 
 
     // Initialize physical properties from C-009 physicsMatrix
@@ -137,11 +142,52 @@ export class VerletClothEngine {
     this.initConstraints();
     this.initTriangles();
     this.computeNormals();
+    this.initAnchorDistances();
   }
 
   /**
    * Initializes initial planar positions and UV coordinates for the cloth swatch.
    */
+
+  /**
+   * Precomputes shortest geodesic rest distance from each particle to nearest anchor point.
+   * Used to clamp drag target positions so cloth pulls taut firmly without stretching like rubber.
+   */
+  private initAnchorDistances(): void {
+    const pinnedIndices: number[] = [];
+    for (let i = 0; i < this.particleCount; i++) {
+      if (this.pinned[i] === 1) {
+        pinnedIndices.push(i);
+      }
+    }
+
+    if (pinnedIndices.length === 0) {
+      this.minAnchorDist.fill(100.0);
+      this.nearestAnchorIdx.fill(-1);
+      return;
+    }
+
+    for (let i = 0; i < this.particleCount; i++) {
+      const ix = i % this.gridX;
+      const iy = Math.floor(i / this.gridX);
+
+      let minDist = Infinity;
+      let nearestAnchor = pinnedIndices[0];
+
+      for (const p of pinnedIndices) {
+        const px = p % this.gridX;
+        const py = Math.floor(p / this.gridX);
+        const dist = Math.hypot((ix - px) * this.spacing, (iy - py) * this.spacing);
+        if (dist < minDist) {
+          minDist = dist;
+          nearestAnchor = p;
+        }
+      }
+
+      this.minAnchorDist[i] = minDist;
+      this.nearestAnchorIdx[i] = nearestAnchor;
+    }
+  }
   private initGridGeometry(): void {
     const halfWidth = ((this.gridX - 1) * this.spacing) / 2;
     const halfHeight = ((this.gridY - 1) * this.spacing) / 2;
@@ -391,12 +437,41 @@ export class VerletClothEngine {
 
   /**
    * Update position of grabbed particle cluster.
+   * Clamps target displacement against the nearest anchor rest length to ensure
+   * the fabric pulls taut with clean tension folds and CANNOT stretch like rubber.
    */
   public drag(worldX: number, worldY: number, worldZ: number = 0): void {
     if (this.grabbedIndex !== -1) {
-      this.grabbedTargetX = worldX;
-      this.grabbedTargetY = worldY;
-      this.grabbedTargetZ = worldZ;
+      let targetX = worldX;
+      let targetY = worldY;
+      let targetZ = worldZ;
+
+      // Inextensibility enforcement: prevent stretching like rubber from anchors
+      const anchor = this.nearestAnchorIdx[this.grabbedIndex];
+      if (anchor !== -1) {
+        const aIdx = anchor * 3;
+        const anchorX = this.positions[aIdx];
+        const anchorY = this.positions[aIdx + 1];
+        const anchorZ = this.positions[aIdx + 2];
+
+        const dx = targetX - anchorX;
+        const dy = targetY - anchorY;
+        const dz = targetZ - anchorZ;
+        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+        // Allow at most 3% tensile extension beyond rest path length from anchor
+        const maxAllowed = Math.max(this.spacing, this.minAnchorDist[this.grabbedIndex] * 1.03);
+        if (dist > maxAllowed && dist > 0.0001) {
+          const scale = maxAllowed / dist;
+          targetX = anchorX + dx * scale;
+          targetY = anchorY + dy * scale;
+          targetZ = anchorZ + dz * scale;
+        }
+      }
+
+      this.grabbedTargetX = targetX;
+      this.grabbedTargetY = targetY;
+      this.grabbedTargetZ = targetZ;
     }
   }
 
@@ -597,16 +672,20 @@ export class VerletClothEngine {
 
       if (this._dist === 0) continue;
 
-      this._diff = (this._dist - rest) / this._dist;
-
-      // Select stiffness based on constraint classification
+      // Provot strain limiting: strictly clamp structural yarn elongation to max 3%
       let stiffness = structuralStiffness;
-      if (type === 2) {
-        // Bending constraint (flexion resistance)
-        stiffness = bendingFactor;
-      } else if (type === 1) {
-        // Shear constraint (allows diagonal drape without rubber elasticity)
-        stiffness = shearStiffness;
+      if (type === 0 && this._dist > rest * 1.03) {
+        this._diff = (this._dist - rest * 1.02) / this._dist;
+        stiffness = 1.0;
+      } else {
+        this._diff = (this._dist - rest) / this._dist;
+        if (type === 2) {
+          // Bending constraint (flexion resistance)
+          stiffness = bendingFactor;
+        } else if (type === 1) {
+          // Shear constraint (allows diagonal drape without rubber elasticity)
+          stiffness = shearStiffness;
+        }
       }
 
       const pA_pinned = this.pinned[a] === 1 || (a === this.grabbedIndex && this.isInteracting);
