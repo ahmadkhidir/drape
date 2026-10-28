@@ -3,7 +3,7 @@
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { DirectionalLightState } from './types';
-import { getFabricColorAndShine, getFabricTextureUrl } from './ClothSandbox';
+import { getFabricColorAndShine, getFabricTextureUrl } from './fabricVisuals';
 
 export interface MicroWeaveInspectorProps {
   fabricId?: string;

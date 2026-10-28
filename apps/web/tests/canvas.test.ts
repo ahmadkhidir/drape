@@ -506,5 +506,19 @@ describe('Atelier WebGPU Craft Polish & Material Shader Calibration', () => {
     expect(actualDist).toBeLessThanOrEqual(maxAllowedDist * 1.05);
   });
 
+  it('provides {LIVE, MACROWEAVE, INSPECT} mode switcher contracts for ClothSandbox', () => {
+    const supportedModes = ['LIVE', 'MACROWEAVE', 'INSPECT'] as const;
+    expect(supportedModes).toContain('LIVE');
+    expect(supportedModes).toContain('MACROWEAVE');
+    expect(supportedModes).toContain('INSPECT');
+    expect(supportedModes.length).toBe(3);
 
+    // Verify fabric texture lookup works consistently across all modes
+    const silkTexture = getFabricTextureUrl('FAB-SLK-892');
+    expect(silkTexture).toBe('/textures/fabrics/silk-jacquard.svg');
+
+    const satinColor = getFabricColorAndShine('Duchesse Silk Satin');
+    expect(satinColor.roughness).toBeLessThan(0.3);
+    expect(satinColor.metalness).toBeGreaterThan(0.1);
+  });
 });

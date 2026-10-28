@@ -22,11 +22,9 @@ export default function FabricDetailPage() {
   const [fabric, setFabric] = useState<FabricDetail | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
-  const [gravityMode, setGravityMode] = useState<'breeze' | 'drape'>('drape');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [swatchOrdered, setSwatchOrdered] = useState<boolean>(false);
   const [isMicroWeaveOpen, setIsMicroWeaveOpen] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<'3d' | 'macro'>('3d');
 
   useEffect(() => {
     async function loadDetail() {
@@ -154,91 +152,20 @@ export default function FabricDetailPage() {
           {/* Left Column (60%): Interactive 3D WebGPU Viewport & Macro Photography */}
           <div className="lg:col-span-7 space-y-6">
             <div className="relative overflow-hidden rounded-md border border-grey-300/80 dark:border-grey-700/80 bg-obsidian shadow-lg">
-              {/* Mode Switcher Tabs */}
-              <div className="absolute top-4 left-4 z-20 flex items-center space-x-2 bg-obsidian/80 backdrop-blur-md p-1 rounded border border-grey-700">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('3d')}
-                  className={`px-3 py-1 rounded text-[11px] font-sans uppercase tracking-wider font-semibold transition-colors ${
-                    activeTab === '3d'
-                      ? 'bg-gold text-obsidian shadow-sm'
-                      : 'text-alabaster hover:text-gold'
-                  }`}
-                  data-testid="tab-3d"
-                >
-                  60 FPS WebGPU
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('macro')}
-                  className={`px-3 py-1 rounded text-[11px] font-sans uppercase tracking-wider font-semibold transition-colors ${
-                    activeTab === 'macro'
-                      ? 'bg-gold text-obsidian shadow-sm'
-                      : 'text-alabaster hover:text-gold'
-                  }`}
-                  data-testid="tab-macro"
-                >
-                  Macro Weave
-                </button>
-              </div>
-
-              {/* Gravity Physics Toggle */}
-              {activeTab === '3d' && (
-                <div className="absolute top-4 right-4 z-20 flex items-center space-x-1.5 bg-obsidian/80 backdrop-blur-md p-1 rounded border border-grey-700 text-[11px] font-sans uppercase tracking-wider">
-                  {(['breeze', 'drape'] as const).map((mode) => (
-                    <button
-                      key={mode}
-                      type="button"
-                      onClick={() => setGravityMode(mode)}
-                      className={`px-2.5 py-1 rounded capitalize transition-colors ${
-                        gravityMode === mode
-                          ? 'bg-alabaster text-ink font-semibold'
-                          : 'text-grey-400 hover:text-alabaster'
-                      }`}
-                      data-testid={`gravity-${mode}`}
-                    >
-                      {mode}
-                    </button>
-                  ))}
-                </div>
-              )}
-
               {/* Canvas Viewport */}
               <div className="aspect-[4/3] sm:aspect-[16/10] w-full relative">
-                {activeTab === '3d' ? (
-                  <div className="w-full h-full relative">
-                    <ClothSandbox
-                      fabricId={fabric.id}
-                      fabricName={fabric.name}
-                      textureUrl={fabric.thumbnailUrl || fabric.normalMapUrl}
-                      gsm={fabric.gsm}
-                      composition={fabric.fiberBreakdown}
-                      weaveType={fabric.weaveStructure}
-                      drapeCoefficient={fabric.drapeCoefficient}
-                      stiffnessRating={fabric.stiffnessRating}
-                      className="w-full h-full min-h-[440px]"
-                    />
-                  </div>
-                ) : (
-                  <div
-                    className="w-full h-full bg-cover bg-center flex items-end p-6"
-                    style={{
-                      backgroundImage: `url('${fabric.thumbnailUrl}'), radial-gradient(circle, #282D37 0%, #11100F 100%)`,
-                      backgroundColor: '#1E2229',
-                    }}
-                    role="img"
-                    aria-label={`${fabric.name} 10x microscopic weave inspection`}
-                  >
-                    <div className="p-4 rounded bg-obsidian/80 backdrop-blur-md border border-grey-700 text-alabaster max-w-sm space-y-1">
-                      <span className="text-[10px] font-mono text-gold uppercase tracking-widest block">
-                        Optical 10x Macro View
-                      </span>
-                      <p className="text-xs font-sans leading-relaxed text-grey-300">
-                        Inspecting selvage weave density, thread count, and raking light luster across {fabric.fiberBreakdown}.
-                      </p>
-                    </div>
-                  </div>
-                )}
+                <ClothSandbox
+                  fabricId={fabric.id}
+                  fabricName={fabric.name}
+                  textureUrl={fabric.thumbnailUrl || fabric.normalMapUrl}
+                  gsm={fabric.gsm}
+                  composition={fabric.fiberBreakdown}
+                  weaveType={fabric.weaveStructure}
+                  drapeCoefficient={fabric.drapeCoefficient}
+                  stiffnessRating={fabric.stiffnessRating}
+                  onInspectWeave={() => setIsMicroWeaveOpen(true)}
+                  className="w-full h-full min-h-[440px]"
+                />
               </div>
 
               {/* Viewport Micro-Footer */}
@@ -399,7 +326,6 @@ export default function FabricDetailPage() {
               <button
                 type="button"
                 onClick={() => {
-                  setActiveTab('3d');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 className="w-full py-3.5 px-6 rounded-md text-xs font-semibold uppercase tracking-wider border border-grey-300 dark:border-grey-700 text-ink dark:text-alabaster hover:border-gold hover:text-gold transition-colors flex items-center justify-center space-x-2"
@@ -419,7 +345,21 @@ export default function FabricDetailPage() {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      {/* 10x Microscopic Weave Inspector Modal */}
+      {isMicroWeaveOpen && (
+        <MicroWeaveInspector
+          isOpen={isMicroWeaveOpen}
+          onClose={() => setIsMicroWeaveOpen(false)}
+          fabricId={fabric.id}
+          fabricName={fabric.name}
+          millName={fabric.millName}
+          fiberBreakdown={fabric.fiberBreakdown}
+          weaveType={fabric.weaveStructure}
+          gsm={fabric.gsm}
+          textureUrl={fabric.thumbnailUrl || fabric.normalMapUrl}
+        />
+      )}
+    </main>
+  </div>
   );
 }
