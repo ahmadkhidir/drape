@@ -24,10 +24,10 @@ describe("Phase 2: Sensory Motion & Artisan Network Gate Verification", () => {
   // ── 1. Phase 2 Screens & Page Routing ──
   it("verifies all Phase 2 screens exist and export default components", () => {
     const requiredScreens = [
-      "apps/web/src/app/fittings/[id]/page.tsx", // Screen 05: Fitting Results & 360 Motion Video
-      "apps/web/src/app/wardrobe/page.tsx", // Screen 09: Digital Wardrobe Vault & Guest Order Lookup
-      "apps/web/src/app/specs/[token]/page.tsx", // Public Master Tailor Spec Dossier
-      "apps/web/src/app/tailors/page.tsx", // Screen 08: Master Tailor Directory & Concierge Handoff
+      "apps/web/app/fittings/[id]/page.tsx", // Screen 05: Fitting Results & 360 Motion Video
+      "apps/web/app/wardrobe/page.tsx", // Screen 09: Digital Wardrobe Vault & Guest Order Lookup
+      "apps/web/app/specs/[token]/page.tsx", // Public Master Tailor Spec Dossier
+      "apps/web/app/tailors/page.tsx", // Screen 08: Master Tailor Directory & Concierge Handoff
     ];
 
     for (const screenPath of requiredScreens) {
@@ -45,29 +45,29 @@ describe("Phase 2: Sensory Motion & Artisan Network Gate Verification", () => {
   it("verifies all Phase 2 Client components are implemented across declared areas", () => {
     const clientComponents = [
       // 360 Motion Video Player (FEAT-006)
-      "apps/web/src/components/fitting/MotionPlayer.tsx",
+      "apps/web/components/fitting/MotionPlayer.tsx",
       // Digital Wardrobe & Tailor Dossier (FEAT-009)
-      "apps/web/src/components/wardrobe/EmptyWardrobe.tsx",
-      "apps/web/src/components/wardrobe/FittingCard.tsx",
-      "apps/web/src/components/wardrobe/OrderHistoryTable.tsx",
-      "apps/web/src/components/wardrobe/GuestOrderLookup.tsx",
-      "apps/web/src/components/wardrobe/MotionVideoModal.tsx",
-      "apps/web/src/components/wardrobe/WardrobeTabs.tsx",
-      "apps/web/src/components/wardrobe/wardrobeApi.ts",
-      "apps/web/src/components/wardrobe/types.ts",
+      "apps/web/components/wardrobe/EmptyWardrobe.tsx",
+      "apps/web/components/wardrobe/FittingCard.tsx",
+      "apps/web/components/wardrobe/OrderHistoryTable.tsx",
+      "apps/web/components/wardrobe/GuestOrderLookup.tsx",
+      "apps/web/components/wardrobe/MotionVideoModal.tsx",
+      "apps/web/components/wardrobe/WardrobeTabs.tsx",
+      "apps/web/components/wardrobe/wardrobeApi.ts",
+      "apps/web/components/wardrobe/types.ts",
       // Master Tailor Directory (FEAT-010)
-      "apps/web/src/components/tailors/EmptyTailorState.tsx",
-      "apps/web/src/components/tailors/TailorCard.tsx",
-      "apps/web/src/components/tailors/TailorFilterBar.tsx",
-      "apps/web/src/components/tailors/HandoffConfirmationModal.tsx",
-      "apps/web/src/components/tailors/NominateTailorModal.tsx",
-      "apps/web/src/components/tailors/tailorApi.ts",
-      "apps/web/src/components/tailors/types.ts",
+      "apps/web/components/tailors/EmptyTailorState.tsx",
+      "apps/web/components/tailors/TailorCard.tsx",
+      "apps/web/components/tailors/TailorFilterBar.tsx",
+      "apps/web/components/tailors/HandoffConfirmationModal.tsx",
+      "apps/web/components/tailors/NominateTailorModal.tsx",
+      "apps/web/components/tailors/tailorApi.ts",
+      "apps/web/components/tailors/types.ts",
       // Web Audio Soundscape (FEAT-011)
-      "apps/web/src/lib/audio/soundscape.ts",
-      "apps/web/src/lib/audio/useSoundscape.ts",
-      "apps/web/src/lib/audio/noise.ts",
-      "apps/web/src/lib/audio/types.ts",
+      "apps/web/lib/audio/soundscape.ts",
+      "apps/web/lib/audio/useSoundscape.ts",
+      "apps/web/lib/audio/noise.ts",
+      "apps/web/lib/audio/types.ts",
     ];
 
     for (const compPath of clientComponents) {
@@ -217,7 +217,7 @@ describe("Phase 2: Sensory Motion & Artisan Network Gate Verification", () => {
     );
 
     const motionPlayerContent = readFileSync(
-      join(root, "apps/web/src/components/fitting/MotionPlayer.tsx"),
+      join(root, "apps/web/components/fitting/MotionPlayer.tsx"),
       "utf-8"
     );
     assert.ok(
@@ -249,7 +249,7 @@ describe("Phase 2: Sensory Motion & Artisan Network Gate Verification", () => {
     );
 
     const wardrobeApiContent = readFileSync(
-      join(root, "apps/web/src/components/wardrobe/wardrobeApi.ts"),
+      join(root, "apps/web/components/wardrobe/wardrobeApi.ts"),
       "utf-8"
     );
     assert.ok(
@@ -272,7 +272,7 @@ describe("Phase 2: Sensory Motion & Artisan Network Gate Verification", () => {
     );
 
     const tailorApiContent = readFileSync(
-      join(root, "apps/web/src/components/tailors/tailorApi.ts"),
+      join(root, "apps/web/components/tailors/tailorApi.ts"),
       "utf-8"
     );
     assert.ok(
@@ -309,7 +309,7 @@ describe("Phase 2: Sensory Motion & Artisan Network Gate Verification", () => {
 
     // FEAT-011: Web Audio latency budget (< 20ms)
     const soundscapeContent = readFileSync(
-      join(root, "apps/web/src/lib/audio/soundscape.ts"),
+      join(root, "apps/web/lib/audio/soundscape.ts"),
       "utf-8"
     );
     assert.ok(
@@ -329,24 +329,24 @@ describe("Phase 2: Sensory Motion & Artisan Network Gate Verification", () => {
       "services/core/src/services/pdf-spec.service.ts",
       "services/core/src/services/tailor.service.ts",
       "services/core/src/db/schema/tailors.ts",
-      "apps/web/src/app/fittings/[id]/page.tsx",
-      "apps/web/src/app/wardrobe/page.tsx",
-      "apps/web/src/app/specs/[token]/page.tsx",
-      "apps/web/src/app/tailors/page.tsx",
-      "apps/web/src/components/fitting/MotionPlayer.tsx",
-      "apps/web/src/components/wardrobe/EmptyWardrobe.tsx",
-      "apps/web/src/components/wardrobe/FittingCard.tsx",
-      "apps/web/src/components/wardrobe/OrderHistoryTable.tsx",
-      "apps/web/src/components/wardrobe/GuestOrderLookup.tsx",
-      "apps/web/src/components/wardrobe/MotionVideoModal.tsx",
-      "apps/web/src/components/tailors/EmptyTailorState.tsx",
-      "apps/web/src/components/tailors/TailorCard.tsx",
-      "apps/web/src/components/tailors/TailorFilterBar.tsx",
-      "apps/web/src/components/tailors/HandoffConfirmationModal.tsx",
-      "apps/web/src/components/tailors/NominateTailorModal.tsx",
-      "apps/web/src/lib/audio/soundscape.ts",
-      "apps/web/src/lib/audio/useSoundscape.ts",
-      "apps/web/src/lib/audio/noise.ts",
+      "apps/web/app/fittings/[id]/page.tsx",
+      "apps/web/app/wardrobe/page.tsx",
+      "apps/web/app/specs/[token]/page.tsx",
+      "apps/web/app/tailors/page.tsx",
+      "apps/web/components/fitting/MotionPlayer.tsx",
+      "apps/web/components/wardrobe/EmptyWardrobe.tsx",
+      "apps/web/components/wardrobe/FittingCard.tsx",
+      "apps/web/components/wardrobe/OrderHistoryTable.tsx",
+      "apps/web/components/wardrobe/GuestOrderLookup.tsx",
+      "apps/web/components/wardrobe/MotionVideoModal.tsx",
+      "apps/web/components/tailors/EmptyTailorState.tsx",
+      "apps/web/components/tailors/TailorCard.tsx",
+      "apps/web/components/tailors/TailorFilterBar.tsx",
+      "apps/web/components/tailors/HandoffConfirmationModal.tsx",
+      "apps/web/components/tailors/NominateTailorModal.tsx",
+      "apps/web/lib/audio/soundscape.ts",
+      "apps/web/lib/audio/useSoundscape.ts",
+      "apps/web/lib/audio/noise.ts",
       "services/neural-fitting/src/motion_pipeline.py",
       "services/neural-fitting/src/amqp_motion_consumer.py",
     ];

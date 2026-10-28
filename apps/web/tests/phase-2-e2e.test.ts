@@ -64,8 +64,8 @@ import {
   calculateFrameIndex,
   calculateSeekTimeFromFraction,
   createEvt008Payload,
-} from '../src/components/fitting/MotionPlayer';
-import { FittingResultsViewContent } from '../src/app/fittings/[id]/page';
+} from '../components/fitting/MotionPlayer';
+import { FittingResultsViewContent } from '../components/fitting/FittingResultsViewContent';
 
 import {
   EmptyWardrobe,
@@ -83,7 +83,7 @@ import {
   FALLBACK_SAVED_FITTINGS,
   FALLBACK_ORDERS,
   FALLBACK_PUBLIC_SPEC,
-} from '../src/components/wardrobe';
+} from '../components/wardrobe';
 
 import {
   TailorFilterBar,
@@ -102,7 +102,7 @@ import {
   emitTailorTelemetry,
   formatCityName,
   normalizeCityForApi,
-} from '../src/components/tailors';
+} from '../components/tailors';
 
 import {
   SoundscapeEngine,
@@ -112,7 +112,7 @@ import {
   createWhiteNoiseBuffer,
   createPinkNoiseBuffer,
   createBrownianNoiseBuffer,
-} from '../src/lib/audio';
+} from '../lib/audio';
 
 // Mock Web Audio API for Node Environment
 class MockAudioParam {
