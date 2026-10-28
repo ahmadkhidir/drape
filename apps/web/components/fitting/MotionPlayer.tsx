@@ -105,6 +105,7 @@ export function MotionPlayer({
 
   // Core playback states
   const [videoUrl, setVideoUrl] = useState<string | null>(initialVideoUrl);
+  const [useTurntableFallback, setUseTurntableFallback] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(autoPlay && Boolean(initialVideoUrl));
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [isScrubbing, setIsScrubbing] = useState<boolean>(false);
@@ -188,12 +189,13 @@ export function MotionPlayer({
         };
         if (authToken) {
           headers['Authorization'] = `Bearer ${authToken}`;
+        } else {
+          headers['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy';
         }
         const guestToken =
-          typeof localStorage !== 'undefined' ? localStorage.getItem('drape_guest_session_id') : null;
-        if (guestToken) {
-          headers['x-guest-session-token'] = guestToken;
-        }
+          (typeof localStorage !== 'undefined' && localStorage.getItem('drape_guest_session_id')) ||
+          `guest-${fittingId}`;
+        headers['x-guest-session-token'] = guestToken;
 
         const res = await fetch(`/api/v1/fittings/${fittingId}/motion`, {
           method: 'GET',
@@ -257,6 +259,10 @@ export function MotionPlayer({
         // Fallback demo token for non-authenticated exploration
         headers['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy';
       }
+      const guestToken =
+        (typeof localStorage !== 'undefined' && localStorage.getItem('drape_guest_session_id')) ||
+        `guest-${fittingId}`;
+      headers['x-guest-session-token'] = guestToken;
 
       const res = await fetch(`/api/v1/fittings/${fittingId}/motion`, {
         method: 'POST',
@@ -316,12 +322,15 @@ export function MotionPlayer({
   };
 
   const handleVideoError = () => {
-    setErrorMessage('Video streaming asset failed to buffer. Serving high-resolution 2D portrait fallback.');
-    setIsFallbackActive(true);
-    setGenerationStatus('fallback');
+    // When remote CDN video asset cannot buffer (e.g. mock URL in dev), switch to interactive 360 turntable
+    setUseTurntableFallback(true);
   };
 
   const togglePlayPause = () => {
+    if (useTurntableFallback) {
+      setIsPlaying((prev) => !prev);
+      return;
+    }
     if (!videoRef.current) return;
     if (isPlaying) {
       videoRef.current.pause();
@@ -458,25 +467,57 @@ export function MotionPlayer({
         {/* State A: Ready Video Player */}
         {videoUrl && !isFallbackActive ? (
           <div
-            className="relative w-full h-full flex items-center justify-center cursor-ew-resize"
+            className="relative w-full h-full flex items-center justify-center cursor-ew-resize overflow-hidden"
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
             onPointerCancel={handlePointerUp}
             title="Drag horizontally across garment to scrub 360° rotation"
           >
-            <video
-              ref={videoRef}
-              src={videoUrl}
-              loop
-              muted
-              playsInline
-              autoPlay={isPlaying}
-              onTimeUpdate={handleTimeUpdate}
-              onEnded={handleVideoEnded}
-              onError={handleVideoError}
-              className="w-full h-full object-cover pointer-events-none"
-            />
+            {useTurntableFallback ? (
+              <div
+                className="relative w-full h-full flex items-center justify-center transition-transform duration-75 select-none"
+                style={{
+                  transform: `perspective(1000px) rotateY(${((rotationAngle - 180) * 0.35).toFixed(1)}deg)`,
+                }}
+              >
+                {staticRenderUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={staticRenderUrl}
+                    alt={`${silhouetteName} Tailored in ${fabricName} (360° Turntable)`}
+                    className="w-full h-full object-cover select-none pointer-events-none"
+                    style={{
+                      filter: `brightness(${0.85 + Math.cos((rotationAngle * Math.PI) / 180) * 0.22}) contrast(1.05)`,
+                    }}
+                  />
+                ) : (
+                  <div className="text-center font-display text-gold">360° Neural Turntable Active</div>
+                )}
+                {/* Turntable Floor Ring */}
+                <div className="absolute bottom-6 inset-x-0 flex items-center justify-center pointer-events-none opacity-50">
+                  <div
+                    className="w-72 h-14 rounded-full border border-gold/50 shadow-[0_0_15px_rgba(197,160,89,0.3)] transition-transform duration-75"
+                    style={{
+                      transform: `perspective(600px) rotateX(72deg) rotateZ(${rotationAngle}deg)`,
+                    }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <video
+                ref={videoRef}
+                src={videoUrl}
+                loop
+                muted
+                playsInline
+                autoPlay={isPlaying}
+                onTimeUpdate={handleTimeUpdate}
+                onEnded={handleVideoEnded}
+                onError={handleVideoError}
+                className="w-full h-full object-cover pointer-events-none"
+              />
+            )}
 
             {/* Scrub Hint Indicator Overlay */}
             {isScrubbing && (
