@@ -170,7 +170,6 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
             className="relative h-full"
             style={{
               width: containerRef.current ? `${containerRef.current.clientWidth}px` : '100%',
-              minWidth: '600px',
             }}
           >
             <img
